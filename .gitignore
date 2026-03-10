@@ -1,0 +1,44 @@
+.DS_Store
+
+# Xcode user data
+xcuserdata/
+*.xcuserdatad/
+*.xcuserstate
+
+# Build products
+Build/
+DerivedData/
+
+# Swift Package Manager
+.build/
+Package.resolved
+
+# Playground
+timeline.xctimeline
+playground.xcworkspace
+
+# Archives and signing
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output/
+
+# Dependency managers
+Carthage/Build/
+Pods/
+
+# Temporary files
+*.moved-aside
+*.swp
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.pbxuser
+!default.pbxuser
+!project.pbxuser
+!xcshareddata/
