@@ -1,5 +1,4 @@
 import ArgumentParser
-import Noora
 
 struct GetCommand: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
@@ -12,11 +11,8 @@ struct GetCommand: AsyncParsableCommand {
     var name: String
 
     func run() async throws {
-        Noora().warning(
-            .alert(
-                "'\(name)' not retrieved",
-                takeaway: "Keychain integration is not implemented yet. \(.command("get")) is a placeholder."
-            )
-        )
+        let store = ValetSecretStore()
+        let secret = try store.secret(named: name)
+        print(secret)
     }
 }

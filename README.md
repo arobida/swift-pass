@@ -1,12 +1,10 @@
 # Swift Pass CLI
 
-`swift-pass` is a macOS command-line tool built with Swift for securely storing and retrieving API keys with Apple's native Keychain.
+`swift-pass` is a macOS command-line tool built with Swift for securely storing, retrieving, listing, and deleting API keys in Apple's native Keychain.
 
 The project uses Xcode at the repository root and currently builds a single executable target: `swift-pass`.
 
 ## Current Status
-
-The CLI surface is in place, but secret storage is still being wired up.
 
 Current subcommands:
 - `set`
@@ -16,8 +14,8 @@ Current subcommands:
 - `doctor`
 
 Right now:
+- `set`, `get`, `delete`, and `list` perform real macOS Keychain operations
 - `doctor` performs environment and signing checks for Keychain access
-- `set`, `get`, `delete`, and `list` are scaffolds and currently report placeholder output
 
 ## Architecture Decision
 
@@ -65,7 +63,8 @@ Reference:
 It is responsible for:
 - configuring Keychain access
 - checking whether the current process can access the Keychain
-- providing the storage abstraction used by the CLI
+
+The CLI uses the macOS Security framework for the underlying add/get/delete/list item operations, scoped to the `dev.arobida.swift-pass` service name.
 
 ## Project Structure
 

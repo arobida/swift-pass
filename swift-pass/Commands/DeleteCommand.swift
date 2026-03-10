@@ -12,10 +12,24 @@ struct DeleteCommand: AsyncParsableCommand {
     var name: String
 
     func run() async throws {
+        let store = ValetSecretStore()
+        let removed = try store.removeSecret(named: name)
+
+        if removed {
+            Noora().success(
+                .alert(
+                    "'\(name)' deleted",
+                    takeaways: ["The secret was removed from the macOS Keychain."]
+                )
+            )
+
+            return
+        }
+
         Noora().warning(
             .alert(
-                "'\(name)' not deleted",
-                takeaway: "Keychain integration is not implemented yet. \(.command("delete")) is a placeholder."
+                "'\(name)' not found",
+                takeaway: "No stored secret matched that name in the macOS Keychain."
             )
         )
     }

@@ -36,8 +36,8 @@ struct DoctorCommand: AsyncParsableCommand {
                     takeaway: "The running binary at '\(signingStatus?.executablePath ?? CommandLine.arguments[0])' does not embed the expected '\(expectedServiceName)' identifiers."
                 ),
                 .alert(
-                    "Run the signed Xcode build or sign a standalone binary",
-                    takeaway: "Use `scripts/verify-xcodegen.sh` to build the Xcode target, or `scripts/codesign-swift-pass.sh` for a SwiftPM-built executable."
+                    "Run the signed Xcode build",
+                    takeaway: "Build with `xcodebuild -project \"swift-pass.xcodeproj\" -scheme \"swift-pass\" -configuration Debug -derivedDataPath Build build` and rerun the built executable from `Build/Products/Debug/swift-pass`."
                 )
             )
 
@@ -52,7 +52,7 @@ struct DoctorCommand: AsyncParsableCommand {
                 ),
                 .alert(
                     "Xcode signing still needs keychain capabilities",
-                    takeaway: "Enable Keychain Sharing and attach `swift-pass.entitlements` to the target."
+                    takeaway: "Enable Keychain Sharing for the Xcode target and attach a target entitlements file that includes the expected keychain access group."
                 ),
                 .alert(
                     "Verify signing after setup",

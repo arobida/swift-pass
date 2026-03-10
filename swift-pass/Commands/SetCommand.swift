@@ -13,13 +13,25 @@ struct SetCommand: AsyncParsableCommand {
 
     func run() async throws {
         let secret = try resolvedSecret()
+        let store = ValetSecretStore()
+        let result = try store.setSecret(secret.key, named: secret.name)
 
-        Noora().warning(
-            .alert(
-                "'\(secret.name)' not stored",
-                takeaway: "Keychain integration is not implemented yet. \(.command("set")) is a placeholder."
+        switch result {
+        case .created:
+            Noora().success(
+                .alert(
+                    "'\(secret.name)' saved",
+                    takeaways: ["Stored '\(secret.name)' in the macOS Keychain."]
+                )
             )
-        )
+        case .updated:
+            Noora().success(
+                .alert(
+                    "'\(secret.name)' saved",
+                    takeaways: ["Updated '\(secret.name)' in the macOS Keychain."]
+                )
+            )
+        }
     }
 
     private func resolvedSecret() throws -> (name: String, key: String) {
@@ -37,7 +49,7 @@ struct SetCommand: AsyncParsableCommand {
         let key = noora.textPrompt(
             title: "Secret key",
             prompt: "What key should be stored for '\(name)'?",
-            description: "Paste the API key you want swift-pass to store later.",
+            description: "Paste the API key you want swift-pass to store in the macOS Keychain.",
             validationRules: [NonEmptyValidationRule(error: "Secret key cannot be empty.")]
         )
 
