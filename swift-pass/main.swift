@@ -1,15 +1,7 @@
-//
-//  main.swift
-//  swift-pass
-//
-//  Created by Andrew Robida on 3/8/26.
-//
-
-import Foundation
+import Dispatch
 import ArgumentParser
-import Noora
 
-@available(macOS 15.0, *)
+@available(macOS 10.15, *)
 struct SwiftPass: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "swift-pass",
@@ -25,4 +17,15 @@ struct SwiftPass: AsyncParsableCommand {
     )
 }
 
-SwiftPass.main()
+if #available(macOS 10.15, *) {
+    let semaphore = DispatchSemaphore(value: 0)
+
+    Task {
+        await SwiftPass.main()
+        semaphore.signal()
+    }
+
+    semaphore.wait()
+} else {
+    preconditionFailure("swift-pass requires macOS 10.15 or newer.")
+}
