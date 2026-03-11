@@ -5,10 +5,10 @@ struct SetCommand: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "set",
         abstract: "Store a secret in the Keychain.",
-        discussion: "Provide a secret as <name>:<key>. If omitted, Noora will prompt for the name and key separately."
+        discussion: "Provide a secret as <name>=<key>. If omitted, Noora will prompt for the name and key separately."
     )
 
-    @Argument(help: "A secret entry in the format <name>:<key>.")
+    @Argument(help: "A secret entry in the format <name>=<key>.")
     var entry: String?
 
     func run() async throws {
@@ -57,10 +57,10 @@ struct SetCommand: AsyncParsableCommand {
     }
 
     private func parse(entry: String) throws -> (name: String, key: String) {
-        let parts = entry.split(separator: ":", maxSplits: 1, omittingEmptySubsequences: false)
+        let parts = entry.split(separator: "=", maxSplits: 1, omittingEmptySubsequences: false)
 
         guard parts.count == 2 else {
-            throw ValidationError("The set command expects <name>:<key>.")
+            throw ValidationError("The set command expects <name>=<key>.")
         }
 
         let name = String(parts[0])
