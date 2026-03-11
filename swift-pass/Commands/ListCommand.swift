@@ -5,18 +5,26 @@ struct ListCommand: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "list",
         abstract: "List all stored secrets.",
-        discussion: "Displays the names of every secret currently stored in the Keychain."
+        discussion: "Displays secret names in the default group, a specific group, or a specific subgroup."
     )
 
+    @Option(help: "The group to list. Omit it to list the default group.")
+    var group: String?
+
+    @Option(help: "The subgroup to list.")
+    var subgroup: String?
+
     func run() async throws {
-        let store = ValetSecretStore()
-        let names = try store.secretNames()
+        let scopeInput = try CommandInputResolver.resolveListScope(group: group, subgroup: subgroup)
+        let vault = SecretVault()
+        let scope = try vault.resolveScope(scopeInput, forWrite: false)
+        let names = try vault.secretNames(in: scope)
 
         guard !names.isEmpty else {
             Noora().info(
                 .alert(
                     "No secrets stored",
-                    takeaways: ["The macOS Keychain does not have any swift-pass entries yet."]
+                    takeaways: ["No secrets were found in \(scope.locationDescription)."]
                 )
             )
 

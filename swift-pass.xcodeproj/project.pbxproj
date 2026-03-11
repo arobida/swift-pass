@@ -10,7 +10,47 @@
 		1CDA4B102F5E0870004FF662 /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = 1CDA4B0F2F5E0870004FF662 /* ArgumentParser */; };
 		1CDA4B132F5E08F5004FF662 /* Noora in Frameworks */ = {isa = PBXBuildFile; productRef = 1CDA4B122F5E08F5004FF662 /* Noora */; };
 		1CDA4B2A2F5E0B5D004FF662 /* Valet in Frameworks */ = {isa = PBXBuildFile; productRef = 1CDA4B292F5E0B5D004FF662 /* Valet */; };
+		A1B2C3010000000000000004 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1B2C3010000000000000002 /* XCTest.framework */; };
+		A1B2C3010000000000000014 /* libswift-passCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C0F000000000000000000001 /* libswift-passCore.a */; };
+		C0B000000000000000000001 /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = 1CDA4B0F2F5E0870004FF662 /* ArgumentParser */; };
+		C0B000000000000000000002 /* Noora in Frameworks */ = {isa = PBXBuildFile; productRef = 1CDA4B122F5E08F5004FF662 /* Noora */; };
+		C0B000000000000000000003 /* Valet in Frameworks */ = {isa = PBXBuildFile; productRef = 1CDA4B292F5E0B5D004FF662 /* Valet */; };
+		C0B000000000000000000010 /* CommandInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000001 /* CommandInput.swift */; };
+		C0B000000000000000000011 /* CreateCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000002 /* CreateCommand.swift */; };
+		C0B000000000000000000012 /* DeleteCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000003 /* DeleteCommand.swift */; };
+		C0B000000000000000000013 /* DoctorCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000004 /* DoctorCommand.swift */; };
+		C0B000000000000000000014 /* GetCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000005 /* GetCommand.swift */; };
+		C0B000000000000000000015 /* ListCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000006 /* ListCommand.swift */; };
+		C0B000000000000000000016 /* SetCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000007 /* SetCommand.swift */; };
+		C0B000000000000000000017 /* CurrentProcessSigningInspector.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000008 /* CurrentProcessSigningInspector.swift */; };
+		C0B000000000000000000018 /* GroupCatalogError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000009 /* GroupCatalogError.swift */; };
+		C0B000000000000000000019 /* GroupCatalogStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A00000000000000000000A /* GroupCatalogStore.swift */; };
+		C0B00000000000000000001A /* KeychainConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A00000000000000000000B /* KeychainConfiguration.swift */; };
+		C0B00000000000000000001B /* KeychainGroupCatalogStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A00000000000000000000C /* KeychainGroupCatalogStore.swift */; };
+		C0B00000000000000000001C /* SecretModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A00000000000000000000D /* SecretModels.swift */; };
+		C0B00000000000000000001D /* SecretStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A00000000000000000000E /* SecretStore.swift */; };
+		C0B00000000000000000001E /* SecretStoreError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A00000000000000000000F /* SecretStoreError.swift */; };
+		C0B00000000000000000001F /* SecretVault.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000010 /* SecretVault.swift */; };
+		C0B000000000000000000020 /* ValetSecretStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000011 /* ValetSecretStore.swift */; };
+		C0B000000000000000000021 /* UserPrompter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000012 /* UserPrompter.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		A1B2C3010000000000000012 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1CDA4AFC2F5E06CE004FF662 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1CDA4B032F5E06CE004FF662;
+			remoteInfo = "swift-pass";
+		};
+		C0F000000000000000000008 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1CDA4AFC2F5E06CE004FF662 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C0F000000000000000000002;
+			remoteInfo = "swift-passCore";
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		1CDA4B022F5E06CE004FF662 /* CopyFiles */ = {
@@ -26,12 +66,38 @@
 
 /* Begin PBXFileReference section */
 		1CDA4B042F5E06CE004FF662 /* swift-pass */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "swift-pass"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1B2C3010000000000000001 /* swift-passTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "swift-passTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1B2C3010000000000000002 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/MacOSX.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		C0A000000000000000000001 /* CommandInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Commands/CommandInput.swift"; sourceTree = SOURCE_ROOT; };
+		C0A000000000000000000002 /* CreateCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Commands/CreateCommand.swift"; sourceTree = SOURCE_ROOT; };
+		C0A000000000000000000003 /* DeleteCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Commands/DeleteCommand.swift"; sourceTree = SOURCE_ROOT; };
+		C0A000000000000000000004 /* DoctorCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Commands/DoctorCommand.swift"; sourceTree = SOURCE_ROOT; };
+		C0A000000000000000000005 /* GetCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Commands/GetCommand.swift"; sourceTree = SOURCE_ROOT; };
+		C0A000000000000000000006 /* ListCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Commands/ListCommand.swift"; sourceTree = SOURCE_ROOT; };
+		C0A000000000000000000007 /* SetCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Commands/SetCommand.swift"; sourceTree = SOURCE_ROOT; };
+		C0A000000000000000000008 /* CurrentProcessSigningInspector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Keychain/CurrentProcessSigningInspector.swift"; sourceTree = SOURCE_ROOT; };
+		C0A000000000000000000009 /* GroupCatalogError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Keychain/GroupCatalogError.swift"; sourceTree = SOURCE_ROOT; };
+		C0A00000000000000000000A /* GroupCatalogStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Keychain/GroupCatalogStore.swift"; sourceTree = SOURCE_ROOT; };
+		C0A00000000000000000000B /* KeychainConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Keychain/KeychainConfiguration.swift"; sourceTree = SOURCE_ROOT; };
+		C0A00000000000000000000C /* KeychainGroupCatalogStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Keychain/KeychainGroupCatalogStore.swift"; sourceTree = SOURCE_ROOT; };
+		C0A00000000000000000000D /* SecretModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Keychain/SecretModels.swift"; sourceTree = SOURCE_ROOT; };
+		C0A00000000000000000000E /* SecretStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Keychain/SecretStore.swift"; sourceTree = SOURCE_ROOT; };
+		C0A00000000000000000000F /* SecretStoreError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Keychain/SecretStoreError.swift"; sourceTree = SOURCE_ROOT; };
+		C0A000000000000000000010 /* SecretVault.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Keychain/SecretVault.swift"; sourceTree = SOURCE_ROOT; };
+		C0A000000000000000000011 /* ValetSecretStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Keychain/ValetSecretStore.swift"; sourceTree = SOURCE_ROOT; };
+		C0A000000000000000000012 /* UserPrompter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Support/UserPrompter.swift"; sourceTree = SOURCE_ROOT; };
+		C0F000000000000000000001 /* libswift-passCore.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libswift-passCore.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		1CDA4B062F5E06CE004FF662 /* swift-pass */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = "swift-pass";
+			sourceTree = "<group>";
+		};
+		A1B2C3010000000000000003 /* swift-passTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "swift-passTests";
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -47,6 +113,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A1B2C3010000000000000006 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1B2C3010000000000000004 /* XCTest.framework in Frameworks */,
+				A1B2C3010000000000000014 /* libswift-passCore.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C0F000000000000000000007 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C0B000000000000000000003 /* Valet in Frameworks */,
+				C0B000000000000000000002 /* Noora in Frameworks */,
+				C0B000000000000000000001 /* ArgumentParser in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -54,6 +139,7 @@
 			isa = PBXGroup;
 			children = (
 				1CDA4B062F5E06CE004FF662 /* swift-pass */,
+				A1B2C3010000000000000003 /* swift-passTests */,
 				1CDA4B052F5E06CE004FF662 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -62,6 +148,8 @@
 			isa = PBXGroup;
 			children = (
 				1CDA4B042F5E06CE004FF662 /* swift-pass */,
+				C0F000000000000000000001 /* libswift-passCore.a */,
+				A1B2C3010000000000000001 /* swift-passTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -94,6 +182,51 @@
 			productReference = 1CDA4B042F5E06CE004FF662 /* swift-pass */;
 			productType = "com.apple.product-type.tool";
 		};
+		A1B2C3010000000000000008 /* swift-passTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A1B2C3010000000000000009 /* Build configuration list for PBXNativeTarget "swift-passTests" */;
+			buildPhases = (
+				A1B2C3010000000000000005 /* Sources */,
+				A1B2C3010000000000000006 /* Frameworks */,
+				A1B2C3010000000000000007 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A1B2C3010000000000000013 /* PBXTargetDependency */,
+				C0F000000000000000000009 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				A1B2C3010000000000000003 /* swift-passTests */,
+			);
+			name = "swift-passTests";
+			packageProductDependencies = (
+			);
+			productName = "swift-passTests";
+			productReference = A1B2C3010000000000000001 /* swift-passTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		C0F000000000000000000002 /* swift-passCore */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C0F000000000000000000003 /* Build configuration list for PBXNativeTarget "swift-passCore" */;
+			buildPhases = (
+				C0F000000000000000000006 /* Sources */,
+				C0F000000000000000000007 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "swift-passCore";
+			packageProductDependencies = (
+				1CDA4B0F2F5E0870004FF662 /* ArgumentParser */,
+				1CDA4B122F5E08F5004FF662 /* Noora */,
+				1CDA4B292F5E0B5D004FF662 /* Valet */,
+			);
+			productName = "swift-passCore";
+			productReference = C0F000000000000000000001 /* libswift-passCore.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -105,6 +238,13 @@
 				LastUpgradeCheck = 2600;
 				TargetAttributes = {
 					1CDA4B032F5E06CE004FF662 = {
+						CreatedOnToolsVersion = 26.0;
+					};
+					A1B2C3010000000000000008 = {
+						CreatedOnToolsVersion = 26.0;
+						TestTargetID = 1CDA4B032F5E06CE004FF662;
+					};
+					C0F000000000000000000002 = {
 						CreatedOnToolsVersion = 26.0;
 					};
 				};
@@ -129,9 +269,21 @@
 			projectRoot = "";
 			targets = (
 				1CDA4B032F5E06CE004FF662 /* swift-pass */,
+				C0F000000000000000000002 /* swift-passCore */,
+				A1B2C3010000000000000008 /* swift-passTests */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A1B2C3010000000000000007 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		1CDA4B002F5E06CE004FF662 /* Sources */ = {
@@ -141,7 +293,52 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A1B2C3010000000000000005 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C0F000000000000000000006 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C0B000000000000000000010 /* CommandInput.swift in Sources */,
+				C0B000000000000000000011 /* CreateCommand.swift in Sources */,
+				C0B000000000000000000012 /* DeleteCommand.swift in Sources */,
+				C0B000000000000000000013 /* DoctorCommand.swift in Sources */,
+				C0B000000000000000000014 /* GetCommand.swift in Sources */,
+				C0B000000000000000000015 /* ListCommand.swift in Sources */,
+				C0B000000000000000000016 /* SetCommand.swift in Sources */,
+				C0B000000000000000000017 /* CurrentProcessSigningInspector.swift in Sources */,
+				C0B000000000000000000018 /* GroupCatalogError.swift in Sources */,
+				C0B000000000000000000019 /* GroupCatalogStore.swift in Sources */,
+				C0B00000000000000000001A /* KeychainConfiguration.swift in Sources */,
+				C0B00000000000000000001B /* KeychainGroupCatalogStore.swift in Sources */,
+				C0B00000000000000000001C /* SecretModels.swift in Sources */,
+				C0B00000000000000000001D /* SecretStore.swift in Sources */,
+				C0B00000000000000000001E /* SecretStoreError.swift in Sources */,
+				C0B00000000000000000001F /* SecretVault.swift in Sources */,
+				C0B000000000000000000020 /* ValetSecretStore.swift in Sources */,
+				C0B000000000000000000021 /* UserPrompter.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A1B2C3010000000000000013 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1CDA4B032F5E06CE004FF662 /* swift-pass */;
+			targetProxy = A1B2C3010000000000000012 /* PBXContainerItemProxy */;
+		};
+		C0F000000000000000000009 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C0F000000000000000000002 /* swift-passCore */;
+			targetProxy = C0F000000000000000000008 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		1CDA4B092F5E06CE004FF662 /* Debug */ = {
@@ -294,6 +491,80 @@
 			};
 			name = Release;
 		};
+		A1B2C3010000000000000010 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = RRQB5Y6LBH;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 15.6;
+				PRODUCT_BUNDLE_IDENTIFIER = "dev.keys.swift-passTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		A1B2C3010000000000000011 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = RRQB5Y6LBH;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 15.6;
+				PRODUCT_BUNDLE_IDENTIFIER = "dev.keys.swift-passTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		C0F000000000000000000004 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				MACOSX_DEPLOYMENT_TARGET = 15.6;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				DEFINES_MODULE = YES;
+			};
+			name = Debug;
+		};
+		C0F000000000000000000005 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				MACOSX_DEPLOYMENT_TARGET = 15.6;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				DEFINES_MODULE = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -311,6 +582,24 @@
 			buildConfigurations = (
 				1CDA4B0C2F5E06CE004FF662 /* Debug */,
 				1CDA4B0D2F5E06CE004FF662 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A1B2C3010000000000000009 /* Build configuration list for PBXNativeTarget "swift-passTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1B2C3010000000000000010 /* Debug */,
+				A1B2C3010000000000000011 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C0F000000000000000000003 /* Build configuration list for PBXNativeTarget "swift-passCore" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C0F000000000000000000004 /* Debug */,
+				C0F000000000000000000005 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

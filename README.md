@@ -2,11 +2,20 @@
 
 `swift-pass` is a macOS command-line tool built with Swift for securely storing, retrieving, listing, and deleting API keys in Apple's native Keychain.
 
-The project uses Xcode at the repository root and currently builds a single executable target: `swift-pass`.
+It supports grouped secrets with one level of nesting:
+- default group secrets: `swift-pass set "github=token"`
+- named group secrets: `swift-pass set "myproject:github=token"`
+- subgroup secrets: `swift-pass set "myproject:dev:github=token"`
+
+The project uses Xcode at the repository root. It currently includes:
+- the executable target `swift-pass`
+- the supporting static library target `swift-passCore`
+- the XCTest target `swift-passTests`
 
 ## Current Status
 
 Current subcommands:
+- `create`
 - `set`
 - `get`
 - `delete`
@@ -14,8 +23,9 @@ Current subcommands:
 - `doctor`
 
 Right now:
-- `set`, `get`, `delete`, and `list` perform real macOS Keychain operations
+- `create`, `set`, `get`, `delete`, and `list` perform real macOS Keychain operations
 - `doctor` performs environment and signing checks for Keychain access
+- `set` bootstraps the default group on first write and migrates any legacy flat secrets into that default group
 
 ## Architecture Decision
 
@@ -65,12 +75,15 @@ It is responsible for:
 - checking whether the current process can access the Keychain
 
 The CLI uses the macOS Security framework for the underlying add/get/delete/list item operations, scoped to the `dev.keys.swift-pass` service name.
+Group metadata is stored separately in the Keychain under `dev.keys.swift-pass.metadata`.
 
 ## Project Structure
 
 - `swift-pass/main.swift` defines the CLI entry point and top-level subcommand registration
 - `swift-pass/Commands/` contains one file per subcommand
 - `swift-pass/Keychain/` contains Keychain configuration, signing inspection, and storage abstractions
+- `swift-pass/Support/` contains shared prompt helpers
+- `swift-passTests/` contains the XCTest suite
 - `swift-pass.xcodeproj/` contains the Xcode project and package dependency wiring
 - `Build/` contains derived build output
 
@@ -108,18 +121,33 @@ Run a specific subcommand:
 "Build/Products/Debug/swift-pass" doctor
 ```
 
+Create a group or subgroup:
+
+```bash
+"Build/Products/Debug/swift-pass" create "myproject"
+"Build/Products/Debug/swift-pass" create "myproject:dev"
+```
+
+Store and read grouped secrets:
+
+```bash
+"Build/Products/Debug/swift-pass" set "github=token"
+"Build/Products/Debug/swift-pass" set "myproject:github=token"
+"Build/Products/Debug/swift-pass" set "myproject:dev:github=token"
+"Build/Products/Debug/swift-pass" get "myproject:dev:github"
+"Build/Products/Debug/swift-pass" list --group myproject --subgroup dev
+```
+
 ## Testing
 
-There is currently no runnable test target configured for the Xcode scheme.
-
-This command currently fails:
+Run the full XCTest suite:
 
 ```bash
 xcodebuild -project "swift-pass.xcodeproj" -scheme "swift-pass" -configuration Debug -derivedDataPath Build test
 ```
 
-Current failure:
+Run one XCTest class:
 
-```text
-Scheme swift-pass is not currently configured for the test action.
+```bash
+xcodebuild -project "swift-pass.xcodeproj" -scheme "swift-pass" -configuration Debug -derivedDataPath Build test -only-testing:"swift-passTests/SecretVaultTests"
 ```

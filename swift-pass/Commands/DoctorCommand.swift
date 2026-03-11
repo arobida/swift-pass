@@ -1,4 +1,5 @@
 import ArgumentParser
+import Foundation
 import Noora
 
 struct DoctorCommand: AsyncParsableCommand {
@@ -9,8 +10,11 @@ struct DoctorCommand: AsyncParsableCommand {
     )
 
     func run() async throws {
+        let vault = SecretVault()
         let store = ValetSecretStore()
+        let catalogStore = KeychainGroupCatalogStore()
         let expectedServiceName = store.configuration.serviceName
+        let metadataServiceName = catalogStore.configuration.serviceName
         let signingStatus = try? CurrentProcessSigningInspector().inspect()
         let hasExpectedSigning = signingStatus?.hasExpectedKeychainEntitlements(for: expectedServiceName) ?? false
 
@@ -44,7 +48,7 @@ struct DoctorCommand: AsyncParsableCommand {
             return
         }
 
-        guard store.canAccessKeychain() else {
+        guard vault.canAccessSecretStore() else {
             Noora().warning(
                 .alert(
                     "Keychain access is not available",
@@ -63,6 +67,44 @@ struct DoctorCommand: AsyncParsableCommand {
             return
         }
 
+        guard vault.canAccessCatalogStore() else {
+            Noora().warning(
+                .alert(
+                    "Metadata Keychain access is not available",
+                    takeaway: "swift-pass uses '\(metadataServiceName)' to store group and default-group metadata."
+                ),
+                .alert(
+                    "Current environment cannot open the metadata Keychain store",
+                    takeaway: "Try rerunning \(.command("doctor")) from your normal signed desktop session."
+                )
+            )
+
+            return
+        }
+
+        let catalogStatus: TerminalText
+
+        do {
+            if let catalog = try vault.currentCatalog() {
+                catalogStatus = "The group catalog is readable and the default group is '\(catalog.defaultGroup)'."
+            } else {
+                catalogStatus = "The group catalog has not been initialized yet. It will be created on the first set or create command."
+            }
+        } catch {
+            Noora().warning(
+                .alert(
+                    "The group catalog could not be read",
+                    takeaway: TerminalText(stringLiteral: error.localizedDescription)
+                ),
+                .alert(
+                    "Secret storage access is available",
+                    takeaway: "The Keychain service itself is reachable, but group metadata needs repair before grouped commands can be used."
+                )
+            )
+
+            return
+        }
+
         Noora().success(
             .alert(
                 "Keychain setup looks good",
@@ -71,6 +113,8 @@ struct DoctorCommand: AsyncParsableCommand {
                     "Noora is available for interactive terminal output.",
                     "The running executable is signed with the expected application identifier for '\(expectedServiceName)'.",
                     "Valet can access the Keychain with the '\(expectedServiceName)' service identifier.",
+                    "swift-pass can access the metadata Keychain store '\(metadataServiceName)'.",
+                    catalogStatus,
                 ]
             )
         )

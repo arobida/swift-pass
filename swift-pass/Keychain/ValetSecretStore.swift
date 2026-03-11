@@ -5,10 +5,12 @@ import Valet
 struct ValetSecretStore: SecretStore {
     let configuration: KeychainConfiguration
 
+    private let codec: ScopedSecretKeyCodec
     private let valet: Valet
 
     init(configuration: KeychainConfiguration = .default) {
         self.configuration = configuration
+        codec = ScopedSecretKeyCodec()
         valet = Valet.valet(
             with: configuration.valetIdentifier,
             accessibility: configuration.accessibility
@@ -19,25 +21,56 @@ struct ValetSecretStore: SecretStore {
         valet.canAccessKeychain()
     }
 
-    func setSecret(_ value: String, named name: String) throws -> SecretStoreSaveResult {
+    func setSecret(_ value: String, at reference: SecretReference) throws -> SecretStoreSaveResult {
+        try setSecret(value, accountName: codec.encode(reference), label: reference.displayPath)
+    }
+
+    func secret(at reference: SecretReference) throws -> String {
+        try secretValue(accountName: codec.encode(reference), label: reference.displayPath)
+    }
+
+    func removeSecret(at reference: SecretReference) throws -> Bool {
+        try removeSecret(accountName: codec.encode(reference), label: reference.displayPath)
+    }
+
+    func secretNames(in scope: SecretScope) throws -> [String] {
+        try allAccountNames()
+            .compactMap(codec.decode)
+            .filter { $0.scope == scope }
+            .map(\.name)
+            .sorted()
+    }
+
+    func legacySecretEntries() throws -> [LegacySecretEntry] {
+        try allAccountNames()
+            .filter { codec.decode($0) == nil }
+            .sorted()
+            .map { LegacySecretEntry(name: $0, value: try secretValue(accountName: $0, label: $0)) }
+    }
+
+    func removeLegacySecret(named name: String) throws -> Bool {
+        try removeSecret(accountName: name, label: name)
+    }
+
+    private func setSecret(_ value: String, accountName: String, label: String) throws -> SecretStoreSaveResult {
         guard let data = value.data(using: .utf8) else {
-            throw SecretStoreError.invalidSecretEncoding(name)
+            throw SecretStoreError.invalidSecretEncoding(label)
         }
 
-        let addStatus = SecItemAdd(addQuery(for: name, data: data) as CFDictionary, nil)
+        let addStatus = SecItemAdd(addQuery(for: accountName, data: data) as CFDictionary, nil)
 
         switch addStatus {
         case errSecSuccess:
             return .created
         case errSecDuplicateItem:
             let updateStatus = SecItemUpdate(
-                itemQuery(for: name) as CFDictionary,
+                itemQuery(for: accountName) as CFDictionary,
                 [kSecValueData as String: data] as CFDictionary
             )
 
             guard updateStatus == errSecSuccess else {
                 throw SecretStoreError.operationFailed(
-                    operation: "update the secret named '\(name)' in the macOS Keychain",
+                    operation: "update the secret named '\(label)' in the macOS Keychain",
                     status: updateStatus
                 )
             }
@@ -45,15 +78,15 @@ struct ValetSecretStore: SecretStore {
             return .updated
         default:
             throw SecretStoreError.operationFailed(
-                operation: "store the secret named '\(name)' in the macOS Keychain",
+                operation: "store the secret named '\(label)' in the macOS Keychain",
                 status: addStatus
             )
         }
     }
 
-    func secret(named name: String) throws -> String {
+    private func secretValue(accountName: String, label: String) throws -> String {
         var result: CFTypeRef?
-        let query: [String: Any] = itemQuery(for: name).merging(
+        let query: [String: Any] = itemQuery(for: accountName).merging(
             [
                 kSecMatchLimit as String: kSecMatchLimitOne,
                 kSecReturnData as String: true,
@@ -66,26 +99,26 @@ struct ValetSecretStore: SecretStore {
         switch status {
         case errSecSuccess:
             guard let data = result as? Data else {
-                throw SecretStoreError.invalidSecretData(name)
+                throw SecretStoreError.invalidSecretData(label)
             }
 
             guard let secret = String(data: data, encoding: .utf8) else {
-                throw SecretStoreError.invalidSecretData(name)
+                throw SecretStoreError.invalidSecretData(label)
             }
 
             return secret
         case errSecItemNotFound:
-            throw SecretStoreError.secretNotFound(name)
+            throw SecretStoreError.secretNotFound(label)
         default:
             throw SecretStoreError.operationFailed(
-                operation: "read the secret named '\(name)' from the macOS Keychain",
+                operation: "read the secret named '\(label)' from the macOS Keychain",
                 status: status
             )
         }
     }
 
-    func removeSecret(named name: String) throws -> Bool {
-        let status = SecItemDelete(itemQuery(for: name) as CFDictionary)
+    private func removeSecret(accountName: String, label: String) throws -> Bool {
+        let status = SecItemDelete(itemQuery(for: accountName) as CFDictionary)
 
         switch status {
         case errSecSuccess:
@@ -94,13 +127,13 @@ struct ValetSecretStore: SecretStore {
             return false
         default:
             throw SecretStoreError.operationFailed(
-                operation: "delete the secret named '\(name)' from the macOS Keychain",
+                operation: "delete the secret named '\(label)' from the macOS Keychain",
                 status: status
             )
         }
     }
 
-    func secretNames() throws -> [String] {
+    private func allAccountNames() throws -> [String] {
         var result: CFTypeRef?
         let query: [String: Any] = serviceQuery().merging(
             [
@@ -114,7 +147,7 @@ struct ValetSecretStore: SecretStore {
 
         switch status {
         case errSecSuccess:
-            return try secretNames(from: result).sorted()
+            return try accountNames(from: result).sorted()
         case errSecItemNotFound:
             return []
         default:
@@ -149,7 +182,7 @@ struct ValetSecretStore: SecretStore {
         }
     }
 
-    private func secretNames(from result: CFTypeRef?) throws -> [String] {
+    private func accountNames(from result: CFTypeRef?) throws -> [String] {
         if let items = result as? [[String: Any]] {
             return items.compactMap { $0[kSecAttrAccount as String] as? String }
         }

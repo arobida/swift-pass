@@ -5,12 +5,15 @@
 - The project is Xcode-based, not SwiftPM-based at the repository root.
 - The main app target lives in `swift-pass.xcodeproj` and sources live in `swift-pass/`.
 - There is currently one executable target: `swift-pass`.
-- There is currently no test target and the Xcode scheme is not configured for the test action.
+- There is one supporting static library target: `swift-passCore`.
+- There is one XCTest bundle target: `swift-passTests`.
 
 ## Repository Layout
 - `swift-pass/main.swift` defines the CLI entry point and top-level subcommand registration.
 - `swift-pass/Commands/` contains one file per CLI subcommand.
 - `swift-pass/Keychain/` contains keychain access and signing inspection code.
+- `swift-pass/Support/` contains shared terminal prompting helpers.
+- `swift-passTests/` contains the XCTest suite.
 - `swift-pass.xcodeproj/` contains project settings and Swift package dependency wiring.
 - `Build/` is derived build output and should generally be treated as generated content.
 
@@ -41,6 +44,10 @@ xcodebuild -project "swift-pass.xcodeproj" -scheme "swift-pass" -configuration D
 ```bash
 xcodebuild -project "swift-pass.xcodeproj" -scheme "swift-pass" -configuration Release -derivedDataPath Build build
 ```
+- Run the test suite:
+```bash
+xcodebuild -project "swift-pass.xcodeproj" -scheme "swift-pass" -configuration Debug -derivedDataPath Build test
+```
 - Run the built executable directly:
 ```bash
 "Build/Products/Debug/swift-pass" --help
@@ -48,22 +55,19 @@ xcodebuild -project "swift-pass.xcodeproj" -scheme "swift-pass" -configuration R
 - Clean local build artifacts by deleting `Build/` if needed.
 
 ## Test Commands
-- Current state: `xcodebuild ... test` fails because the scheme is not configured for testing.
-- Verified failing command:
+- Run the full XCTest suite:
 ```bash
 xcodebuild -project "swift-pass.xcodeproj" -scheme "swift-pass" -configuration Debug -derivedDataPath Build test
 ```
-- Current failure reason: `Scheme swift-pass is not currently configured for the test action.`
-- Conclusion: there are no runnable tests in the current repository state.
+- Current verified state: the `swift-pass` shared scheme is configured for the test action and the suite passes.
 
 ## Single-Test Guidance
-- There is no single-test command that works today because no test target exists.
-- If a test target is added later, prefer Xcode test execution over guessing SwiftPM commands.
-- Typical future command shape for one XCTest case:
+- Prefer Xcode test execution over guessing SwiftPM commands.
+- Run one XCTest case:
 ```bash
 xcodebuild -project "swift-pass.xcodeproj" -scheme "swift-pass" -configuration Debug -derivedDataPath Build test -only-testing:"swift-passTests/TestCaseName/testExample"
 ```
-- Typical future command shape for one XCTest class:
+- Run one XCTest class:
 ```bash
 xcodebuild -project "swift-pass.xcodeproj" -scheme "swift-pass" -configuration Debug -derivedDataPath Build test -only-testing:"swift-passTests/TestCaseName"
 ```
@@ -77,8 +81,8 @@ xcodebuild -project "swift-pass.xcodeproj" -scheme "swift-pass" -configuration D
 
 ## Recommended Validation Workflow
 - For code changes, run the debug build command first.
+- Run the XCTest suite when behavior, parsing, or storage logic changes.
 - If you change CLI behavior, also run `"Build/Products/Debug/swift-pass" --help` or the affected subcommand.
-- If you add tests, update the scheme and add concrete test commands to this file.
 - If you add scripts referenced by the codebase, verify the paths actually exist before documenting them.
 
 ## Platform And Build Settings
@@ -149,10 +153,13 @@ xcodebuild -project "swift-pass.xcodeproj" -scheme "swift-pass" -configuration D
 - Use `Noora` for user-facing alerts, prompts, warnings, and success messages.
 - Match the existing tone: direct, helpful, and concise.
 - Prefer actionable takeaways in terminal output.
+- Scoped secret shorthand uses `group:name` and `group:subgroup:name`; unqualified names resolve to the default group.
+- `create` is the explicit command for creating groups and subgroups; `set` may prompt to create missing scopes in interactive sessions.
 
 ## Keychain And Security Conventions
 - Keep keychain-related logic under `swift-pass/Keychain/`.
 - Preserve the service-name-driven configuration pattern used by `KeychainConfiguration`.
+- Secrets are stored under `dev.keys.swift-pass`; group metadata is stored separately under `dev.keys.swift-pass.metadata`.
 - Be careful with entitlements, signing inspection, and Keychain access-group logic.
 - Do not log or print secrets unless the command explicitly requires revealing them.
 - Treat security-sensitive defaults conservatively.

@@ -5,8 +5,10 @@ enum SecretStoreSaveResult {
 
 protocol SecretStore {
     func canAccessKeychain() -> Bool
-    func setSecret(_ value: String, named name: String) throws -> SecretStoreSaveResult
-    func secret(named name: String) throws -> String
-    func removeSecret(named name: String) throws -> Bool
-    func secretNames() throws -> [String]
+    func setSecret(_ value: String, at reference: SecretReference) throws -> SecretStoreSaveResult
+    func secret(at reference: SecretReference) throws -> String
+    func removeSecret(at reference: SecretReference) throws -> Bool
+    func secretNames(in scope: SecretScope) throws -> [String]
+    func legacySecretEntries() throws -> [LegacySecretEntry]
+    func removeLegacySecret(named name: String) throws -> Bool
 }

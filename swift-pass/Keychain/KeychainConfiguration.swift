@@ -8,6 +8,12 @@ struct KeychainConfiguration {
         securityAccessibility: kSecAttrAccessibleWhenUnlockedThisDeviceOnly
     )
 
+    static let metadata = Self(
+        serviceName: "dev.keys.swift-pass.metadata",
+        accessibility: .whenUnlockedThisDeviceOnly,
+        securityAccessibility: kSecAttrAccessibleWhenUnlockedThisDeviceOnly
+    )
+
     let serviceName: String
     let accessibility: Accessibility
     let securityAccessibility: CFString
