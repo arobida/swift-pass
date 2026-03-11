@@ -11,6 +11,10 @@ struct CurrentProcessSigningStatus {
             return false
         }
 
+        guard !keychainAccessGroups.isEmpty else {
+            return true
+        }
+
         return keychainAccessGroups.contains { matchesExpectedIdentifier($0, serviceName: serviceName) }
     }
 

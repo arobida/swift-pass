@@ -268,7 +268,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CODE_SIGN_ENTITLEMENTS = "swift-pass/swift-pass.entitlements";
 				DEVELOPMENT_TEAM = RRQB5Y6LBH;
 				ENABLE_HARDENED_RUNTIME = YES;
 				MACOSX_DEPLOYMENT_TARGET = 15.6;
@@ -284,7 +283,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CODE_SIGN_ENTITLEMENTS = "swift-pass/swift-pass.entitlements";
 				DEVELOPMENT_TEAM = RRQB5Y6LBH;
 				ENABLE_HARDENED_RUNTIME = YES;
 				MACOSX_DEPLOYMENT_TARGET = 15.6;

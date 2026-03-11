@@ -12,13 +12,13 @@ struct DoctorCommand: AsyncParsableCommand {
         let store = ValetSecretStore()
         let expectedServiceName = store.configuration.serviceName
         let signingStatus = try? CurrentProcessSigningInspector().inspect()
-        let hasExpectedEntitlements = signingStatus?.hasExpectedKeychainEntitlements(for: expectedServiceName) ?? false
+        let hasExpectedSigning = signingStatus?.hasExpectedKeychainEntitlements(for: expectedServiceName) ?? false
 
         if signingStatus == nil {
             Noora().warning(
                 .alert(
                     "Could not inspect signing information",
-                    takeaway: "Run the Xcode-generated binary directly if you want doctor to confirm embedded keychain entitlements."
+                    takeaway: "Run the Xcode-generated binary directly if you want doctor to confirm the signed application identifier."
                 ),
                 .alert(
                     "Keychain access still needs to be verified",
@@ -29,11 +29,11 @@ struct DoctorCommand: AsyncParsableCommand {
             return
         }
 
-        guard hasExpectedEntitlements else {
+        guard hasExpectedSigning else {
             Noora().warning(
                 .alert(
-                    "Current executable is missing expected keychain entitlements",
-                    takeaway: "The running binary at '\(signingStatus?.executablePath ?? CommandLine.arguments[0])' does not embed the expected '\(expectedServiceName)' identifiers."
+                    "Current executable is not signed for the expected identifier",
+                    takeaway: "The running binary at '\(signingStatus?.executablePath ?? CommandLine.arguments[0])' does not embed the expected '\(expectedServiceName)' application identifier."
                 ),
                 .alert(
                     "Run the signed Xcode build",
@@ -51,12 +51,12 @@ struct DoctorCommand: AsyncParsableCommand {
                     takeaway: "Valet is configured with the '\(expectedServiceName)' service identifier."
                 ),
                 .alert(
-                    "Xcode signing still needs keychain capabilities",
-                    takeaway: "Enable Keychain Sharing for the Xcode target and attach a target entitlements file that includes the expected keychain access group."
+                    "Current environment cannot open the Keychain",
+                    takeaway: "This can happen in a restricted or non-interactive session even when the binary is signed correctly."
                 ),
                 .alert(
-                    "Verify signing after setup",
-                    takeaway: "After signing is configured, rerun \(.command("doctor")) to verify access."
+                    "Verify from your normal login session",
+                    takeaway: "Rerun \(.command("doctor")) from Xcode or Terminal while signed into your macOS desktop session."
                 )
             )
 
@@ -69,7 +69,7 @@ struct DoctorCommand: AsyncParsableCommand {
                 takeaways: [
                     "swift-argument-parser is set up and parsing commands correctly.",
                     "Noora is available for interactive terminal output.",
-                    "The running executable is signed with the expected keychain entitlements for '\(expectedServiceName)'.",
+                    "The running executable is signed with the expected application identifier for '\(expectedServiceName)'.",
                     "Valet can access the Keychain with the '\(expectedServiceName)' service identifier.",
                 ]
             )

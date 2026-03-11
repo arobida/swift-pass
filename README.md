@@ -66,8 +66,6 @@ It is responsible for:
 
 The CLI uses the macOS Security framework for the underlying add/get/delete/list item operations, scoped to the `dev.keys.swift-pass` service name.
 
-The Xcode target is signed with a Keychain Sharing entitlement for `$(AppIdentifierPrefix)dev.keys.swift-pass` so the built binary and the Keychain service identifier stay aligned.
-
 ## Project Structure
 
 - `swift-pass/main.swift` defines the CLI entry point and top-level subcommand registration
