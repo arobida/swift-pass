@@ -1,12 +1,10 @@
 import Foundation
 import Security
-import Valet
 
 struct ValetSecretStore: SecretStore {
     let configuration: KeychainConfiguration
 
     private let codec: ScopedSecretKeyCodec
-    private let valet: Valet
 
     private struct KeychainItemAttributes {
         let accountName: String
@@ -16,14 +14,14 @@ struct ValetSecretStore: SecretStore {
     init(configuration: KeychainConfiguration = .default) {
         self.configuration = configuration
         codec = ScopedSecretKeyCodec()
-        valet = Valet.valet(
-            with: configuration.valetIdentifier,
-            accessibility: configuration.accessibility
-        )
     }
 
     func canAccessKeychain() -> Bool {
-        valet.canAccessKeychain()
+        KeychainAccessProbe(
+            serviceName: configuration.serviceName,
+            accessibility: configuration.securityAccessibility,
+            accountPrefix: "swift-pass.secret-store.probe"
+        ).canAccess()
     }
 
     func setSecret(_ value: String, at reference: SecretReference) throws -> SecretStoreSaveResult {

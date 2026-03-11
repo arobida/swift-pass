@@ -1,27 +1,25 @@
 import Foundation
 import Security
-import Valet
 
 struct KeychainGroupCatalogStore: GroupCatalogStore {
     let configuration: KeychainConfiguration
 
     private let encoder: JSONEncoder
     private let decoder: JSONDecoder
-    private let valet: Valet
     private let accountName = "group-catalog"
 
     init(configuration: KeychainConfiguration = .metadata) {
         self.configuration = configuration
         encoder = JSONEncoder()
         decoder = JSONDecoder()
-        valet = Valet.valet(
-            with: configuration.valetIdentifier,
-            accessibility: configuration.accessibility
-        )
     }
 
     func canAccessKeychain() -> Bool {
-        valet.canAccessKeychain()
+        KeychainAccessProbe(
+            serviceName: configuration.serviceName,
+            accessibility: configuration.securityAccessibility,
+            accountPrefix: "swift-pass.catalog-store.probe"
+        ).canAccess()
     }
 
     func catalog() throws -> GroupCatalog? {

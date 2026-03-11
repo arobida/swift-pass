@@ -33,6 +33,7 @@
 		C0B00000000000000000001F /* swift-pass/Keychain/SecretVault.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000010 /* swift-pass/Keychain/SecretVault.swift */; };
 		C0B000000000000000000020 /* swift-pass/Keychain/ValetSecretStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000011 /* swift-pass/Keychain/ValetSecretStore.swift */; };
 		C0B000000000000000000021 /* swift-pass/Support/UserPrompter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000012 /* swift-pass/Support/UserPrompter.swift */; };
+		C0B000000000000000000022 /* swift-pass/Keychain/KeychainAccessProbe.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000013 /* swift-pass/Keychain/KeychainAccessProbe.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -86,6 +87,7 @@
 		C0A000000000000000000010 /* swift-pass/Keychain/SecretVault.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Keychain/SecretVault.swift"; sourceTree = SOURCE_ROOT; };
 		C0A000000000000000000011 /* swift-pass/Keychain/ValetSecretStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Keychain/ValetSecretStore.swift"; sourceTree = SOURCE_ROOT; };
 		C0A000000000000000000012 /* swift-pass/Support/UserPrompter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Support/UserPrompter.swift"; sourceTree = SOURCE_ROOT; };
+		C0A000000000000000000013 /* swift-pass/Keychain/KeychainAccessProbe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Keychain/KeychainAccessProbe.swift"; sourceTree = SOURCE_ROOT; };
 		C0F000000000000000000001 /* libswift-passCore.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libswift-passCore.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -149,6 +151,7 @@
 				C0A000000000000000000009 /* swift-pass/Keychain/GroupCatalogError.swift */,
 				C0A00000000000000000000A /* swift-pass/Keychain/GroupCatalogStore.swift */,
 				C0A00000000000000000000B /* swift-pass/Keychain/KeychainConfiguration.swift */,
+				C0A000000000000000000013 /* swift-pass/Keychain/KeychainAccessProbe.swift */,
 				C0A00000000000000000000C /* swift-pass/Keychain/KeychainGroupCatalogStore.swift */,
 				C0A00000000000000000000D /* swift-pass/Keychain/SecretModels.swift */,
 				C0A00000000000000000000E /* swift-pass/Keychain/SecretStore.swift */,
@@ -342,6 +345,7 @@
 				C0B000000000000000000018 /* swift-pass/Keychain/GroupCatalogError.swift in Sources */,
 				C0B000000000000000000019 /* swift-pass/Keychain/GroupCatalogStore.swift in Sources */,
 				C0B00000000000000000001A /* swift-pass/Keychain/KeychainConfiguration.swift in Sources */,
+				C0B000000000000000000022 /* swift-pass/Keychain/KeychainAccessProbe.swift in Sources */,
 				C0B00000000000000000001B /* swift-pass/Keychain/KeychainGroupCatalogStore.swift in Sources */,
 				C0B00000000000000000001C /* swift-pass/Keychain/SecretModels.swift in Sources */,
 				C0B00000000000000000001D /* swift-pass/Keychain/SecretStore.swift in Sources */,
