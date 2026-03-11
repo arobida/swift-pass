@@ -6,11 +6,14 @@ struct ListCommand: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "list",
         abstract: "List all stored secrets.",
-        discussion: "Displays secrets in the default group, a specific group, or a specific subgroup. By default this renders a table; use --plain for newline-delimited names or --interactive to select a row.",
+        discussion: "Displays secrets in the default group, a specific group, or a specific subgroup. Use <group> or <group>:<subgroup> for shorthand. By default this renders a table; use --plain for newline-delimited names or --interactive to select a row.",
         aliases: ["ls"]
     )
 
     private static let interactivePageSize = 10
+
+    @Argument(help: "The scope to list in the format <group> or <group>:<subgroup>.")
+    var scope: String?
 
     @Option(help: "The group to list. Omit it to list the default group.")
     var group: String?
@@ -27,7 +30,11 @@ struct ListCommand: AsyncParsableCommand {
     func run() async throws {
         try validateOutputOptions()
 
-        let scopeInput = try CommandInputResolver.resolveListScope(group: group, subgroup: subgroup)
+        let scopeInput = try CommandInputResolver.resolveListScope(
+            shorthand: scope,
+            group: group,
+            subgroup: subgroup
+        )
         let vault = SecretVault()
         let scope = try vault.resolveScope(scopeInput, forWrite: false)
         let entries = try vault.secretListEntries(in: scope)

@@ -57,7 +57,35 @@ final class CommandInputResolverTests: XCTestCase {
     }
 
     func testListScopeKeepsExplicitGroupAndSubgroup() throws {
-        let scope = try CommandInputResolver.resolveListScope(group: "myproject", subgroup: "dev")
+        let scope = try CommandInputResolver.resolveListScope(
+            shorthand: nil,
+            group: "myproject",
+            subgroup: "dev"
+        )
         XCTAssertEqual(scope, SecretScopeInput(group: "myproject", subgroup: "dev"))
+    }
+
+    func testListScopeParsesShorthandGroupAndSubgroup() throws {
+        let scope = try CommandInputResolver.resolveListScope(
+            shorthand: "myproject:dev",
+            group: nil,
+            subgroup: nil
+        )
+
+        XCTAssertEqual(scope, SecretScopeInput(group: "myproject", subgroup: "dev"))
+    }
+
+    func testListScopeRejectsMixedShorthandAndFlags() {
+        XCTAssertThrowsError(
+            try CommandInputResolver.resolveListScope(
+                shorthand: "myproject:dev",
+                group: "myproject",
+                subgroup: nil
+            )
+        ) { error in
+            XCTAssertTrue(
+                String(describing: error).contains("Do not mix shorthand input with --group or --subgroup.")
+            )
+        }
     }
 }

@@ -158,7 +158,31 @@ enum CommandInputResolver {
         )
     }
 
-    static func resolveListScope(group: String?, subgroup: String?) throws -> SecretScopeInput {
+    static func resolveListScope(
+        shorthand: String?,
+        group: String?,
+        subgroup: String?
+    ) throws -> SecretScopeInput {
+        if let shorthand {
+            guard group == nil, subgroup == nil else {
+                throw ValidationError("Do not mix shorthand input with --group or --subgroup.")
+            }
+
+            let parts = shorthand.split(separator: ":", omittingEmptySubsequences: false).map(String.init)
+
+            switch parts.count {
+            case 1:
+                return SecretScopeInput(group: try validatedGroup(parts[0]))
+            case 2:
+                return SecretScopeInput(
+                    group: try validatedGroup(parts[0]),
+                    subgroup: try validatedSubgroup(parts[1])
+                )
+            default:
+                throw ValidationError("The list command expects <group> or <group>:<subgroup>.")
+            }
+        }
+
         guard subgroup == nil || group != nil else {
             throw ValidationError("The --subgroup option requires --group.")
         }
