@@ -65,7 +65,9 @@ struct CurrentProcessSigningInspector {
 
         let signingInformationDictionary = signingInformation as NSDictionary
         let entitlements = signingInformationDictionary[kSecCodeInfoEntitlementsDict as String] as? NSDictionary
-        let applicationIdentifier = entitlements?["application-identifier"] as? String
+        let applicationIdentifier =
+            entitlements?["application-identifier"] as? String ??
+            entitlements?["com.apple.application-identifier"] as? String
         let keychainAccessGroups = entitlements?["keychain-access-groups"] as? [String] ?? []
 
         return CurrentProcessSigningStatus(

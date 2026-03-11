@@ -3,7 +3,7 @@ import Valet
 
 struct KeychainConfiguration {
     static let `default` = Self(
-        serviceName: "dev.arobida.swift-pass",
+        serviceName: "dev.keys.swift-pass",
         accessibility: .whenUnlockedThisDeviceOnly,
         securityAccessibility: kSecAttrAccessibleWhenUnlockedThisDeviceOnly
     )

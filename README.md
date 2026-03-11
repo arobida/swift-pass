@@ -64,7 +64,9 @@ It is responsible for:
 - configuring Keychain access
 - checking whether the current process can access the Keychain
 
-The CLI uses the macOS Security framework for the underlying add/get/delete/list item operations, scoped to the `dev.arobida.swift-pass` service name.
+The CLI uses the macOS Security framework for the underlying add/get/delete/list item operations, scoped to the `dev.keys.swift-pass` service name.
+
+The Xcode target is signed with a Keychain Sharing entitlement for `$(AppIdentifierPrefix)dev.keys.swift-pass` so the built binary and the Keychain service identifier stay aligned.
 
 ## Project Structure
 
