@@ -85,20 +85,28 @@ struct DoctorCommand: AsyncParsableCommand {
         let catalogStatus: TerminalText
 
         do {
-            if let catalog = try vault.currentCatalog() {
-                catalogStatus = "The group catalog is readable and the default group is '\(catalog.defaultGroup)'."
-            } else {
-                catalogStatus = "The group catalog has not been initialized yet. It will be created on the first set or create command."
+            let status = try vault.doctorStatus()
+            let alerts = warningAlerts(for: status)
+
+            if !alerts.isEmpty {
+                Noora().warning(alerts)
+
+                return
             }
+
+            guard let catalog = status.catalog else {
+                throw GroupCatalogError.defaultGroupNotConfigured
+            }
+            catalogStatus = "The group catalog is readable and the default group is '\(catalog.defaultGroup)'."
         } catch {
             Noora().warning(
                 .alert(
-                    "The group catalog could not be read",
+                    "swift-pass could not complete the storage audit",
                     takeaway: TerminalText(stringLiteral: error.localizedDescription)
                 ),
                 .alert(
-                    "Secret storage access is available",
-                    takeaway: "The Keychain service itself is reachable, but group metadata needs repair before grouped commands can be used."
+                    "Keychain access is available",
+                    takeaway: "The Keychain services are reachable, but swift-pass could not verify group metadata and secret parentage."
                 )
             )
 
@@ -115,8 +123,55 @@ struct DoctorCommand: AsyncParsableCommand {
                     "Valet can access the Keychain with the '\(expectedServiceName)' service identifier.",
                     "swift-pass can access the metadata Keychain store '\(metadataServiceName)'.",
                     catalogStatus,
+                    "All stored secrets belong to a configured group.",
                 ]
             )
         )
+    }
+
+    private func warningAlerts(for status: DoctorStatus) -> [WarningAlert] {
+        var alerts: [WarningAlert] = []
+
+        if status.catalog == nil {
+            alerts.append(
+                WarningAlert.alert(
+                    "No default group is configured.",
+                    takeaway: "Run \(TerminalText.Component.command("swift-pass create default")) to initialize the group catalog."
+                )
+            )
+        }
+
+        let orphanedReferences = status.orphanedSecretReferences
+
+        if !orphanedReferences.isEmpty {
+            alerts.append(
+                WarningAlert.alert(
+                    "Found \(orphanedReferences.count) scoped secret\(orphanedReferences.count == 1 ? "" : "s") without a parent group: \(formattedSecretPaths(orphanedReferences.map(\.displayPath))).",
+                    takeaway: "Create the missing group or subgroup before relying on those secrets."
+                )
+            )
+        }
+
+        if !status.legacySecretEntries.isEmpty {
+            alerts.append(
+                WarningAlert.alert(
+                    "Found \(status.legacySecretEntries.count) legacy secret\(status.legacySecretEntries.count == 1 ? "" : "s") without group metadata: \(formattedSecretPaths(status.legacySecretEntries.map(\.name))).",
+                    takeaway: "Run \(TerminalText.Component.command("swift-pass create default")) or store a new secret to migrate legacy entries into the default group."
+                )
+            )
+        }
+
+        return alerts
+    }
+
+    private func formattedSecretPaths(_ paths: [String], limit: Int = 5) -> TerminalText {
+        let sortedPaths = paths.sorted()
+        let preview = sortedPaths.prefix(limit).joined(separator: ", ")
+
+        if sortedPaths.count > limit {
+            return TerminalText(stringLiteral: "\(preview), +\(sortedPaths.count - limit) more")
+        }
+
+        return TerminalText(stringLiteral: preview)
     }
 }

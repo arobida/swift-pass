@@ -3,6 +3,22 @@ struct CreateScopeOutcome {
     let scope: SecretScope
 }
 
+struct DoctorStatus {
+    let catalog: GroupCatalog?
+    let secretReferences: [SecretReference]
+    let legacySecretEntries: [LegacySecretEntry]
+
+    var orphanedSecretReferences: [SecretReference] {
+        guard let catalog else {
+            return secretReferences
+        }
+
+        return secretReferences.filter { reference in
+            !catalog.scopeExists(reference.scope)
+        }
+    }
+}
+
 struct SecretVault {
     let secretStore: SecretStore
     let catalogStore: GroupCatalogStore
@@ -31,6 +47,14 @@ struct SecretVault {
 
     func currentCatalog() throws -> GroupCatalog? {
         try catalogStore.catalog()
+    }
+
+    func doctorStatus() throws -> DoctorStatus {
+        DoctorStatus(
+            catalog: try catalogStore.catalog(),
+            secretReferences: try secretStore.allSecretReferences(),
+            legacySecretEntries: try secretStore.legacySecretEntries()
+        )
     }
 
     func resolveScope(_ input: SecretScopeInput, forWrite: Bool) throws -> SecretScope {

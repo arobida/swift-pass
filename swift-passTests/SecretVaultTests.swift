@@ -134,6 +134,93 @@ final class SecretVaultTests: XCTestCase {
         XCTAssertEqual(scope, try SecretScope(group: "team"))
     }
 
+    func testDoctorStatusReportsHealthyCatalogAndNoOrphanedSecrets() throws {
+        let secretStore = InMemorySecretStore()
+        let catalog = GroupCatalog(
+            schemaVersion: GroupCatalog.currentSchemaVersion,
+            defaultGroup: "default",
+            groups: [
+                .init(name: "default", subgroups: []),
+                .init(name: "project", subgroups: ["dev"]),
+            ]
+        )
+        let catalogStore = InMemoryGroupCatalogStore(catalog: catalog)
+        let vault = SecretVault(
+            secretStore: secretStore,
+            catalogStore: catalogStore,
+            prompter: StubPrompter(),
+            environment: .init(isInteractive: true)
+        )
+        secretStore.scopedValues[try SecretReference(scope: SecretScope(group: "default"), name: "github")] = "token"
+        secretStore.scopedValues[try SecretReference(scope: SecretScope(group: "project", subgroup: "dev"), name: "openai")] = "token"
+
+        let status = try vault.doctorStatus()
+
+        XCTAssertEqual(status.catalog, catalog)
+        XCTAssertEqual(status.orphanedSecretReferences, [])
+        XCTAssertEqual(status.legacySecretEntries, [])
+    }
+
+    func testDoctorStatusTreatsAllScopedSecretsAsOrphanedWhenCatalogIsMissing() throws {
+        let secretStore = InMemorySecretStore()
+        let vault = SecretVault(
+            secretStore: secretStore,
+            catalogStore: InMemoryGroupCatalogStore(),
+            prompter: StubPrompter(),
+            environment: .init(isInteractive: true)
+        )
+        let reference = try SecretReference(scope: SecretScope(group: "default"), name: "github")
+        secretStore.scopedValues[reference] = "token"
+
+        let status = try vault.doctorStatus()
+
+        XCTAssertNil(status.catalog)
+        XCTAssertEqual(status.orphanedSecretReferences, [reference])
+    }
+
+    func testDoctorStatusReportsSecretsWhoseParentScopeIsMissingFromCatalog() throws {
+        let secretStore = InMemorySecretStore()
+        let catalogStore = InMemoryGroupCatalogStore(
+            catalog: GroupCatalog(
+                schemaVersion: GroupCatalog.currentSchemaVersion,
+                defaultGroup: "default",
+                groups: [
+                    .init(name: "default", subgroups: []),
+                    .init(name: "project", subgroups: []),
+                ]
+            )
+        )
+        let vault = SecretVault(
+            secretStore: secretStore,
+            catalogStore: catalogStore,
+            prompter: StubPrompter(),
+            environment: .init(isInteractive: true)
+        )
+        let missingGroupReference = try SecretReference(scope: SecretScope(group: "orphaned"), name: "github")
+        let missingSubgroupReference = try SecretReference(scope: SecretScope(group: "project", subgroup: "dev"), name: "openai")
+        secretStore.scopedValues[missingGroupReference] = "token"
+        secretStore.scopedValues[missingSubgroupReference] = "token"
+
+        let status = try vault.doctorStatus()
+
+        XCTAssertEqual(status.orphanedSecretReferences, [missingGroupReference, missingSubgroupReference])
+    }
+
+    func testDoctorStatusIncludesLegacySecretsWithoutParentGroup() throws {
+        let secretStore = InMemorySecretStore()
+        secretStore.legacyValues["github"] = "legacy-token"
+        let vault = SecretVault(
+            secretStore: secretStore,
+            catalogStore: InMemoryGroupCatalogStore(catalog: GroupCatalog.bootstrappedDefault()),
+            prompter: StubPrompter(),
+            environment: .init(isInteractive: true)
+        )
+
+        let status = try vault.doctorStatus()
+
+        XCTAssertEqual(status.legacySecretEntries, [LegacySecretEntry(name: "github", value: "legacy-token")])
+    }
+
     func testDuplicateCreateIsIdempotent() throws {
         let catalogStore = InMemoryGroupCatalogStore()
         let vault = SecretVault(

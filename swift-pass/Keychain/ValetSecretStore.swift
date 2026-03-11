@@ -38,6 +38,14 @@ struct ValetSecretStore: SecretStore {
         try removeSecret(accountName: codec.encode(reference), label: reference.displayPath)
     }
 
+    func allSecretReferences() throws -> [SecretReference] {
+        try allItemAttributes()
+            .compactMap { attributes in
+                codec.decode(attributes.accountName)
+            }
+            .sorted { $0.displayPath < $1.displayPath }
+    }
+
     func secretListEntries(in scope: SecretScope) throws -> [SecretListEntry] {
         try allItemAttributes()
             .compactMap { attributes in

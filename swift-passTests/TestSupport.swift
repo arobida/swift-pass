@@ -74,6 +74,10 @@ final class InMemorySecretStore: SecretStore {
         return scopedValues.removeValue(forKey: reference) != nil
     }
 
+    func allSecretReferences() throws -> [SecretReference] {
+        scopedValues.keys.sorted { $0.displayPath < $1.displayPath }
+    }
+
     func secretListEntries(in scope: SecretScope) throws -> [SecretListEntry] {
         scopedValues.keys
             .filter { $0.scope == scope }
