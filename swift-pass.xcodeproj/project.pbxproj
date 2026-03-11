@@ -15,24 +15,24 @@
 		C0B000000000000000000001 /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = 1CDA4B0F2F5E0870004FF662 /* ArgumentParser */; };
 		C0B000000000000000000002 /* Noora in Frameworks */ = {isa = PBXBuildFile; productRef = 1CDA4B122F5E08F5004FF662 /* Noora */; };
 		C0B000000000000000000003 /* Valet in Frameworks */ = {isa = PBXBuildFile; productRef = 1CDA4B292F5E0B5D004FF662 /* Valet */; };
-		C0B000000000000000000010 /* CommandInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000001 /* CommandInput.swift */; };
-		C0B000000000000000000011 /* CreateCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000002 /* CreateCommand.swift */; };
-		C0B000000000000000000012 /* DeleteCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000003 /* DeleteCommand.swift */; };
-		C0B000000000000000000013 /* DoctorCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000004 /* DoctorCommand.swift */; };
-		C0B000000000000000000014 /* GetCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000005 /* GetCommand.swift */; };
-		C0B000000000000000000015 /* ListCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000006 /* ListCommand.swift */; };
-		C0B000000000000000000016 /* SetCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000007 /* SetCommand.swift */; };
-		C0B000000000000000000017 /* CurrentProcessSigningInspector.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000008 /* CurrentProcessSigningInspector.swift */; };
-		C0B000000000000000000018 /* GroupCatalogError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000009 /* GroupCatalogError.swift */; };
-		C0B000000000000000000019 /* GroupCatalogStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A00000000000000000000A /* GroupCatalogStore.swift */; };
-		C0B00000000000000000001A /* KeychainConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A00000000000000000000B /* KeychainConfiguration.swift */; };
-		C0B00000000000000000001B /* KeychainGroupCatalogStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A00000000000000000000C /* KeychainGroupCatalogStore.swift */; };
-		C0B00000000000000000001C /* SecretModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A00000000000000000000D /* SecretModels.swift */; };
-		C0B00000000000000000001D /* SecretStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A00000000000000000000E /* SecretStore.swift */; };
-		C0B00000000000000000001E /* SecretStoreError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A00000000000000000000F /* SecretStoreError.swift */; };
-		C0B00000000000000000001F /* SecretVault.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000010 /* SecretVault.swift */; };
-		C0B000000000000000000020 /* ValetSecretStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000011 /* ValetSecretStore.swift */; };
-		C0B000000000000000000021 /* UserPrompter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000012 /* UserPrompter.swift */; };
+		C0B000000000000000000010 /* swift-pass/Commands/CommandInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000001 /* swift-pass/Commands/CommandInput.swift */; };
+		C0B000000000000000000011 /* swift-pass/Commands/CreateCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000002 /* swift-pass/Commands/CreateCommand.swift */; };
+		C0B000000000000000000012 /* swift-pass/Commands/DeleteCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000003 /* swift-pass/Commands/DeleteCommand.swift */; };
+		C0B000000000000000000013 /* swift-pass/Commands/DoctorCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000004 /* swift-pass/Commands/DoctorCommand.swift */; };
+		C0B000000000000000000014 /* swift-pass/Commands/GetCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000005 /* swift-pass/Commands/GetCommand.swift */; };
+		C0B000000000000000000015 /* swift-pass/Commands/ListCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000006 /* swift-pass/Commands/ListCommand.swift */; };
+		C0B000000000000000000016 /* swift-pass/Commands/SetCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000007 /* swift-pass/Commands/SetCommand.swift */; };
+		C0B000000000000000000017 /* swift-pass/Keychain/CurrentProcessSigningInspector.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000008 /* swift-pass/Keychain/CurrentProcessSigningInspector.swift */; };
+		C0B000000000000000000018 /* swift-pass/Keychain/GroupCatalogError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000009 /* swift-pass/Keychain/GroupCatalogError.swift */; };
+		C0B000000000000000000019 /* swift-pass/Keychain/GroupCatalogStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A00000000000000000000A /* swift-pass/Keychain/GroupCatalogStore.swift */; };
+		C0B00000000000000000001A /* swift-pass/Keychain/KeychainConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A00000000000000000000B /* swift-pass/Keychain/KeychainConfiguration.swift */; };
+		C0B00000000000000000001B /* swift-pass/Keychain/KeychainGroupCatalogStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A00000000000000000000C /* swift-pass/Keychain/KeychainGroupCatalogStore.swift */; };
+		C0B00000000000000000001C /* swift-pass/Keychain/SecretModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A00000000000000000000D /* swift-pass/Keychain/SecretModels.swift */; };
+		C0B00000000000000000001D /* swift-pass/Keychain/SecretStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A00000000000000000000E /* swift-pass/Keychain/SecretStore.swift */; };
+		C0B00000000000000000001E /* swift-pass/Keychain/SecretStoreError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A00000000000000000000F /* swift-pass/Keychain/SecretStoreError.swift */; };
+		C0B00000000000000000001F /* swift-pass/Keychain/SecretVault.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000010 /* swift-pass/Keychain/SecretVault.swift */; };
+		C0B000000000000000000020 /* swift-pass/Keychain/ValetSecretStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000011 /* swift-pass/Keychain/ValetSecretStore.swift */; };
+		C0B000000000000000000021 /* swift-pass/Support/UserPrompter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000012 /* swift-pass/Support/UserPrompter.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -68,24 +68,24 @@
 		1CDA4B042F5E06CE004FF662 /* swift-pass */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "swift-pass"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1B2C3010000000000000001 /* swift-passTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "swift-passTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1B2C3010000000000000002 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/MacOSX.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
-		C0A000000000000000000001 /* CommandInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Commands/CommandInput.swift"; sourceTree = SOURCE_ROOT; };
-		C0A000000000000000000002 /* CreateCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Commands/CreateCommand.swift"; sourceTree = SOURCE_ROOT; };
-		C0A000000000000000000003 /* DeleteCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Commands/DeleteCommand.swift"; sourceTree = SOURCE_ROOT; };
-		C0A000000000000000000004 /* DoctorCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Commands/DoctorCommand.swift"; sourceTree = SOURCE_ROOT; };
-		C0A000000000000000000005 /* GetCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Commands/GetCommand.swift"; sourceTree = SOURCE_ROOT; };
-		C0A000000000000000000006 /* ListCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Commands/ListCommand.swift"; sourceTree = SOURCE_ROOT; };
-		C0A000000000000000000007 /* SetCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Commands/SetCommand.swift"; sourceTree = SOURCE_ROOT; };
-		C0A000000000000000000008 /* CurrentProcessSigningInspector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Keychain/CurrentProcessSigningInspector.swift"; sourceTree = SOURCE_ROOT; };
-		C0A000000000000000000009 /* GroupCatalogError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Keychain/GroupCatalogError.swift"; sourceTree = SOURCE_ROOT; };
-		C0A00000000000000000000A /* GroupCatalogStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Keychain/GroupCatalogStore.swift"; sourceTree = SOURCE_ROOT; };
-		C0A00000000000000000000B /* KeychainConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Keychain/KeychainConfiguration.swift"; sourceTree = SOURCE_ROOT; };
-		C0A00000000000000000000C /* KeychainGroupCatalogStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Keychain/KeychainGroupCatalogStore.swift"; sourceTree = SOURCE_ROOT; };
-		C0A00000000000000000000D /* SecretModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Keychain/SecretModels.swift"; sourceTree = SOURCE_ROOT; };
-		C0A00000000000000000000E /* SecretStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Keychain/SecretStore.swift"; sourceTree = SOURCE_ROOT; };
-		C0A00000000000000000000F /* SecretStoreError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Keychain/SecretStoreError.swift"; sourceTree = SOURCE_ROOT; };
-		C0A000000000000000000010 /* SecretVault.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Keychain/SecretVault.swift"; sourceTree = SOURCE_ROOT; };
-		C0A000000000000000000011 /* ValetSecretStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Keychain/ValetSecretStore.swift"; sourceTree = SOURCE_ROOT; };
-		C0A000000000000000000012 /* UserPrompter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Support/UserPrompter.swift"; sourceTree = SOURCE_ROOT; };
+		C0A000000000000000000001 /* swift-pass/Commands/CommandInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Commands/CommandInput.swift"; sourceTree = SOURCE_ROOT; };
+		C0A000000000000000000002 /* swift-pass/Commands/CreateCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Commands/CreateCommand.swift"; sourceTree = SOURCE_ROOT; };
+		C0A000000000000000000003 /* swift-pass/Commands/DeleteCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Commands/DeleteCommand.swift"; sourceTree = SOURCE_ROOT; };
+		C0A000000000000000000004 /* swift-pass/Commands/DoctorCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Commands/DoctorCommand.swift"; sourceTree = SOURCE_ROOT; };
+		C0A000000000000000000005 /* swift-pass/Commands/GetCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Commands/GetCommand.swift"; sourceTree = SOURCE_ROOT; };
+		C0A000000000000000000006 /* swift-pass/Commands/ListCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Commands/ListCommand.swift"; sourceTree = SOURCE_ROOT; };
+		C0A000000000000000000007 /* swift-pass/Commands/SetCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Commands/SetCommand.swift"; sourceTree = SOURCE_ROOT; };
+		C0A000000000000000000008 /* swift-pass/Keychain/CurrentProcessSigningInspector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Keychain/CurrentProcessSigningInspector.swift"; sourceTree = SOURCE_ROOT; };
+		C0A000000000000000000009 /* swift-pass/Keychain/GroupCatalogError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Keychain/GroupCatalogError.swift"; sourceTree = SOURCE_ROOT; };
+		C0A00000000000000000000A /* swift-pass/Keychain/GroupCatalogStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Keychain/GroupCatalogStore.swift"; sourceTree = SOURCE_ROOT; };
+		C0A00000000000000000000B /* swift-pass/Keychain/KeychainConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Keychain/KeychainConfiguration.swift"; sourceTree = SOURCE_ROOT; };
+		C0A00000000000000000000C /* swift-pass/Keychain/KeychainGroupCatalogStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Keychain/KeychainGroupCatalogStore.swift"; sourceTree = SOURCE_ROOT; };
+		C0A00000000000000000000D /* swift-pass/Keychain/SecretModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Keychain/SecretModels.swift"; sourceTree = SOURCE_ROOT; };
+		C0A00000000000000000000E /* swift-pass/Keychain/SecretStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Keychain/SecretStore.swift"; sourceTree = SOURCE_ROOT; };
+		C0A00000000000000000000F /* swift-pass/Keychain/SecretStoreError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Keychain/SecretStoreError.swift"; sourceTree = SOURCE_ROOT; };
+		C0A000000000000000000010 /* swift-pass/Keychain/SecretVault.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Keychain/SecretVault.swift"; sourceTree = SOURCE_ROOT; };
+		C0A000000000000000000011 /* swift-pass/Keychain/ValetSecretStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Keychain/ValetSecretStore.swift"; sourceTree = SOURCE_ROOT; };
+		C0A000000000000000000012 /* swift-pass/Support/UserPrompter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Support/UserPrompter.swift"; sourceTree = SOURCE_ROOT; };
 		C0F000000000000000000001 /* libswift-passCore.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libswift-passCore.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -135,12 +135,39 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1C7408722F61D8870003B7F4 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				C0A000000000000000000001 /* swift-pass/Commands/CommandInput.swift */,
+				C0A000000000000000000002 /* swift-pass/Commands/CreateCommand.swift */,
+				C0A000000000000000000003 /* swift-pass/Commands/DeleteCommand.swift */,
+				C0A000000000000000000004 /* swift-pass/Commands/DoctorCommand.swift */,
+				C0A000000000000000000005 /* swift-pass/Commands/GetCommand.swift */,
+				C0A000000000000000000006 /* swift-pass/Commands/ListCommand.swift */,
+				C0A000000000000000000007 /* swift-pass/Commands/SetCommand.swift */,
+				C0A000000000000000000008 /* swift-pass/Keychain/CurrentProcessSigningInspector.swift */,
+				C0A000000000000000000009 /* swift-pass/Keychain/GroupCatalogError.swift */,
+				C0A00000000000000000000A /* swift-pass/Keychain/GroupCatalogStore.swift */,
+				C0A00000000000000000000B /* swift-pass/Keychain/KeychainConfiguration.swift */,
+				C0A00000000000000000000C /* swift-pass/Keychain/KeychainGroupCatalogStore.swift */,
+				C0A00000000000000000000D /* swift-pass/Keychain/SecretModels.swift */,
+				C0A00000000000000000000E /* swift-pass/Keychain/SecretStore.swift */,
+				C0A00000000000000000000F /* swift-pass/Keychain/SecretStoreError.swift */,
+				C0A000000000000000000010 /* swift-pass/Keychain/SecretVault.swift */,
+				C0A000000000000000000011 /* swift-pass/Keychain/ValetSecretStore.swift */,
+				C0A000000000000000000012 /* swift-pass/Support/UserPrompter.swift */,
+				A1B2C3010000000000000002 /* XCTest.framework */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
 		1CDA4AFB2F5E06CE004FF662 = {
 			isa = PBXGroup;
 			children = (
 				1CDA4B062F5E06CE004FF662 /* swift-pass */,
 				A1B2C3010000000000000003 /* swift-passTests */,
 				1CDA4B052F5E06CE004FF662 /* Products */,
+				1C7408722F61D8870003B7F4 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -304,24 +331,24 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C0B000000000000000000010 /* CommandInput.swift in Sources */,
-				C0B000000000000000000011 /* CreateCommand.swift in Sources */,
-				C0B000000000000000000012 /* DeleteCommand.swift in Sources */,
-				C0B000000000000000000013 /* DoctorCommand.swift in Sources */,
-				C0B000000000000000000014 /* GetCommand.swift in Sources */,
-				C0B000000000000000000015 /* ListCommand.swift in Sources */,
-				C0B000000000000000000016 /* SetCommand.swift in Sources */,
-				C0B000000000000000000017 /* CurrentProcessSigningInspector.swift in Sources */,
-				C0B000000000000000000018 /* GroupCatalogError.swift in Sources */,
-				C0B000000000000000000019 /* GroupCatalogStore.swift in Sources */,
-				C0B00000000000000000001A /* KeychainConfiguration.swift in Sources */,
-				C0B00000000000000000001B /* KeychainGroupCatalogStore.swift in Sources */,
-				C0B00000000000000000001C /* SecretModels.swift in Sources */,
-				C0B00000000000000000001D /* SecretStore.swift in Sources */,
-				C0B00000000000000000001E /* SecretStoreError.swift in Sources */,
-				C0B00000000000000000001F /* SecretVault.swift in Sources */,
-				C0B000000000000000000020 /* ValetSecretStore.swift in Sources */,
-				C0B000000000000000000021 /* UserPrompter.swift in Sources */,
+				C0B000000000000000000010 /* swift-pass/Commands/CommandInput.swift in Sources */,
+				C0B000000000000000000011 /* swift-pass/Commands/CreateCommand.swift in Sources */,
+				C0B000000000000000000012 /* swift-pass/Commands/DeleteCommand.swift in Sources */,
+				C0B000000000000000000013 /* swift-pass/Commands/DoctorCommand.swift in Sources */,
+				C0B000000000000000000014 /* swift-pass/Commands/GetCommand.swift in Sources */,
+				C0B000000000000000000015 /* swift-pass/Commands/ListCommand.swift in Sources */,
+				C0B000000000000000000016 /* swift-pass/Commands/SetCommand.swift in Sources */,
+				C0B000000000000000000017 /* swift-pass/Keychain/CurrentProcessSigningInspector.swift in Sources */,
+				C0B000000000000000000018 /* swift-pass/Keychain/GroupCatalogError.swift in Sources */,
+				C0B000000000000000000019 /* swift-pass/Keychain/GroupCatalogStore.swift in Sources */,
+				C0B00000000000000000001A /* swift-pass/Keychain/KeychainConfiguration.swift in Sources */,
+				C0B00000000000000000001B /* swift-pass/Keychain/KeychainGroupCatalogStore.swift in Sources */,
+				C0B00000000000000000001C /* swift-pass/Keychain/SecretModels.swift in Sources */,
+				C0B00000000000000000001D /* swift-pass/Keychain/SecretStore.swift in Sources */,
+				C0B00000000000000000001E /* swift-pass/Keychain/SecretStoreError.swift in Sources */,
+				C0B00000000000000000001F /* swift-pass/Keychain/SecretVault.swift in Sources */,
+				C0B000000000000000000020 /* swift-pass/Keychain/ValetSecretStore.swift in Sources */,
+				C0B000000000000000000021 /* swift-pass/Support/UserPrompter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -540,13 +567,13 @@
 			buildSettings = {
 				CODE_SIGNING_ALLOWED = NO;
 				CODE_SIGNING_REQUIRED = NO;
+				DEFINES_MODULE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 15.6;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				DEFINES_MODULE = YES;
 			};
 			name = Debug;
 		};
@@ -555,13 +582,13 @@
 			buildSettings = {
 				CODE_SIGNING_ALLOWED = NO;
 				CODE_SIGNING_REQUIRED = NO;
+				DEFINES_MODULE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 15.6;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				DEFINES_MODULE = YES;
 			};
 			name = Release;
 		};
