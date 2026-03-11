@@ -1,8 +1,13 @@
+import ArgumentParser
 import Noora
 import XCTest
 @testable import swift_passCore
 
 final class ListCommandTests: XCTestCase {
+    func testConfigurationIncludesLsAlias() {
+        XCTAssertEqual(ListCommand.configuration.aliases, ["ls"])
+    }
+
     func testValidateOutputOptionsRejectsPlainAndInteractiveTogether() {
         var command = ListCommand()
         command.plain = true
