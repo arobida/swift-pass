@@ -26,6 +26,7 @@ Right now:
 - `create`, `set`, `get`, `delete`, and `list` perform real macOS Keychain operations
 - `doctor` performs environment and signing checks for Keychain access
 - `set` bootstraps the default group on first write and migrates any legacy flat secrets into that default group
+- `list` renders a Noora table by default, supports `--plain` for script-friendly output, and supports `-i` / `--interactive` for row selection
 
 ## Architecture Decision
 
@@ -136,6 +137,8 @@ Store and read grouped secrets:
 "Build/Products/Debug/swift-pass" set "myproject:dev:github=token"
 "Build/Products/Debug/swift-pass" get "myproject:dev:github"
 "Build/Products/Debug/swift-pass" list --group myproject --subgroup dev
+"Build/Products/Debug/swift-pass" list --plain
+"Build/Products/Debug/swift-pass" list -i
 ```
 
 ## Testing

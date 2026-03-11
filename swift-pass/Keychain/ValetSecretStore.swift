@@ -8,6 +8,11 @@ struct ValetSecretStore: SecretStore {
     private let codec: ScopedSecretKeyCodec
     private let valet: Valet
 
+    private struct KeychainItemAttributes {
+        let accountName: String
+        let modificationDate: Date?
+    }
+
     init(configuration: KeychainConfiguration = .default) {
         self.configuration = configuration
         codec = ScopedSecretKeyCodec()
@@ -33,16 +38,28 @@ struct ValetSecretStore: SecretStore {
         try removeSecret(accountName: codec.encode(reference), label: reference.displayPath)
     }
 
+    func secretListEntries(in scope: SecretScope) throws -> [SecretListEntry] {
+        try allItemAttributes()
+            .compactMap { attributes in
+                guard let reference = codec.decode(attributes.accountName), reference.scope == scope else {
+                    return nil
+                }
+
+                return SecretListEntry(
+                    reference: reference,
+                    modificationDate: attributes.modificationDate
+                )
+            }
+            .sorted { $0.reference.name < $1.reference.name }
+    }
+
     func secretNames(in scope: SecretScope) throws -> [String] {
-        try allAccountNames()
-            .compactMap(codec.decode)
-            .filter { $0.scope == scope }
-            .map(\.name)
-            .sorted()
+        try secretListEntries(in: scope).map(\.reference.name)
     }
 
     func legacySecretEntries() throws -> [LegacySecretEntry] {
-        try allAccountNames()
+        try allItemAttributes()
+            .map(\.accountName)
             .filter { codec.decode($0) == nil }
             .sorted()
             .map { LegacySecretEntry(name: $0, value: try secretValue(accountName: $0, label: $0)) }
@@ -133,7 +150,7 @@ struct ValetSecretStore: SecretStore {
         }
     }
 
-    private func allAccountNames() throws -> [String] {
+    private func allItemAttributes() throws -> [KeychainItemAttributes] {
         var result: CFTypeRef?
         let query: [String: Any] = serviceQuery().merging(
             [
@@ -147,7 +164,7 @@ struct ValetSecretStore: SecretStore {
 
         switch status {
         case errSecSuccess:
-            return try accountNames(from: result).sorted()
+            return try itemAttributes(from: result)
         case errSecItemNotFound:
             return []
         default:
@@ -182,14 +199,14 @@ struct ValetSecretStore: SecretStore {
         }
     }
 
-    private func accountNames(from result: CFTypeRef?) throws -> [String] {
+    private func itemAttributes(from result: CFTypeRef?) throws -> [KeychainItemAttributes] {
         if let items = result as? [[String: Any]] {
-            return items.compactMap { $0[kSecAttrAccount as String] as? String }
+            return items.compactMap(keychainItemAttributes(from:))
         }
 
         if let item = result as? [String: Any] {
-            if let name = item[kSecAttrAccount as String] as? String {
-                return [name]
+            if let attributes = keychainItemAttributes(from: item) {
+                return [attributes]
             }
 
             return []
@@ -198,6 +215,17 @@ struct ValetSecretStore: SecretStore {
         throw SecretStoreError.operationFailed(
             operation: "decode the macOS Keychain item list",
             status: errSecInternalError
+        )
+    }
+
+    private func keychainItemAttributes(from item: [String: Any]) -> KeychainItemAttributes? {
+        guard let accountName = item[kSecAttrAccount as String] as? String else {
+            return nil
+        }
+
+        return KeychainItemAttributes(
+            accountName: accountName,
+            modificationDate: item[kSecAttrModificationDate as String] as? Date
         )
     }
 }

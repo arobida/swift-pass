@@ -40,6 +40,7 @@ final class StubPrompter: UserPrompter {
 
 final class InMemorySecretStore: SecretStore {
     var scopedValues: [SecretReference: String] = [:]
+    var scopedModificationDates: [SecretReference: Date] = [:]
     var legacyValues: [String: String] = [:]
     var failWritesForNames: Set<String> = []
 
@@ -56,6 +57,7 @@ final class InMemorySecretStore: SecretStore {
         }
 
         let existed = scopedValues.updateValue(value, forKey: reference) != nil
+        scopedModificationDates[reference] = scopedModificationDates[reference] ?? Date(timeIntervalSince1970: 0)
         return existed ? .updated : .created
     }
 
@@ -68,14 +70,24 @@ final class InMemorySecretStore: SecretStore {
     }
 
     func removeSecret(at reference: SecretReference) throws -> Bool {
-        scopedValues.removeValue(forKey: reference) != nil
+        scopedModificationDates.removeValue(forKey: reference)
+        return scopedValues.removeValue(forKey: reference) != nil
+    }
+
+    func secretListEntries(in scope: SecretScope) throws -> [SecretListEntry] {
+        scopedValues.keys
+            .filter { $0.scope == scope }
+            .map { reference in
+                SecretListEntry(
+                    reference: reference,
+                    modificationDate: scopedModificationDates[reference]
+                )
+            }
+            .sorted { $0.reference.name < $1.reference.name }
     }
 
     func secretNames(in scope: SecretScope) throws -> [String] {
-        scopedValues.keys
-            .filter { $0.scope == scope }
-            .map(\.name)
-            .sorted()
+        try secretListEntries(in: scope).map(\.reference.name)
     }
 
     func legacySecretEntries() throws -> [LegacySecretEntry] {

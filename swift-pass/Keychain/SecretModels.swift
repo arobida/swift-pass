@@ -84,6 +84,11 @@ struct SecretReference: Codable, Equatable, Hashable {
     }
 }
 
+struct SecretListEntry: Equatable {
+    let reference: SecretReference
+    let modificationDate: Date?
+}
+
 struct GroupCatalog: Codable, Equatable {
     struct GroupEntry: Codable, Equatable {
         let name: String

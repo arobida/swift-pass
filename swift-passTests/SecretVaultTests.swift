@@ -81,6 +81,59 @@ final class SecretVaultTests: XCTestCase {
         XCTAssertEqual(names, ["github"])
     }
 
+    func testListEntriesIncludeStructuredMetadataForScope() throws {
+        let secretStore = InMemorySecretStore()
+        let catalogStore = InMemoryGroupCatalogStore(
+            catalog: GroupCatalog(
+                schemaVersion: GroupCatalog.currentSchemaVersion,
+                defaultGroup: "default",
+                groups: [
+                    .init(name: "default", subgroups: ["dev"]),
+                ]
+            )
+        )
+        let vault = SecretVault(
+            secretStore: secretStore,
+            catalogStore: catalogStore,
+            prompter: StubPrompter(),
+            environment: .init(isInteractive: true)
+        )
+        let scope = try SecretScope(group: "default", subgroup: "dev")
+        let date = Date(timeIntervalSince1970: 1_736_082_000)
+        let reference = try SecretReference(scope: scope, name: "github")
+        secretStore.scopedValues[reference] = "token"
+        secretStore.scopedModificationDates[reference] = date
+
+        let entries = try vault.secretListEntries(in: scope)
+
+        XCTAssertEqual(
+            entries,
+            [SecretListEntry(reference: reference, modificationDate: date)]
+        )
+    }
+
+    func testResolveScopeUsesConfiguredDefaultGroupWhenListGroupIsOmitted() throws {
+        let vault = SecretVault(
+            secretStore: InMemorySecretStore(),
+            catalogStore: InMemoryGroupCatalogStore(
+                catalog: GroupCatalog(
+                    schemaVersion: GroupCatalog.currentSchemaVersion,
+                    defaultGroup: "team",
+                    groups: [
+                        .init(name: "default", subgroups: []),
+                        .init(name: "team", subgroups: []),
+                    ]
+                )
+            ),
+            prompter: StubPrompter(),
+            environment: .init(isInteractive: true)
+        )
+
+        let scope = try vault.resolveScope(SecretScopeInput(), forWrite: false)
+
+        XCTAssertEqual(scope, try SecretScope(group: "team"))
+    }
+
     func testDuplicateCreateIsIdempotent() throws {
         let catalogStore = InMemoryGroupCatalogStore()
         let vault = SecretVault(

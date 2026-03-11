@@ -1,12 +1,15 @@
 import ArgumentParser
+import Foundation
 import Noora
 
 struct ListCommand: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "list",
         abstract: "List all stored secrets.",
-        discussion: "Displays secret names in the default group, a specific group, or a specific subgroup."
+        discussion: "Displays secrets in the default group, a specific group, or a specific subgroup. By default this renders a table; use --plain for newline-delimited names or --interactive to select a row."
     )
+
+    private static let interactivePageSize = 10
 
     @Option(help: "The group to list. Omit it to list the default group.")
     var group: String?
@@ -14,13 +17,21 @@ struct ListCommand: AsyncParsableCommand {
     @Option(help: "The subgroup to list.")
     var subgroup: String?
 
+    @Flag(name: [.short, .long], help: "Present the results in an interactive selectable table.")
+    var interactive = false
+
+    @Flag(help: "Print newline-delimited secret names for scripts and pipes.")
+    var plain = false
+
     func run() async throws {
+        try validateOutputOptions()
+
         let scopeInput = try CommandInputResolver.resolveListScope(group: group, subgroup: subgroup)
         let vault = SecretVault()
         let scope = try vault.resolveScope(scopeInput, forWrite: false)
-        let names = try vault.secretNames(in: scope)
+        let entries = try vault.secretListEntries(in: scope)
 
-        guard !names.isEmpty else {
+        guard !entries.isEmpty else {
             Noora().info(
                 .alert(
                     "No secrets stored",
@@ -31,8 +42,62 @@ struct ListCommand: AsyncParsableCommand {
             return
         }
 
-        for name in names {
-            print(name)
+        if plain {
+            for line in plainLines(for: entries) {
+                print(line)
+            }
+
+            return
         }
+
+        let noora = Noora()
+        let data = Self.tableData(for: entries)
+
+        if interactive {
+            let selectedIndex = try await noora.selectableTable(data, pageSize: Self.interactivePageSize)
+            print(entries[selectedIndex].reference.displayPath)
+            return
+        }
+
+        noora.table(data)
+    }
+
+    func validateOutputOptions() throws {
+        guard !(plain && interactive) else {
+            throw ValidationError("The --plain and --interactive options cannot be used together.")
+        }
+    }
+
+    func plainLines(for entries: [SecretListEntry]) -> [String] {
+        entries.map(\.reference.name)
+    }
+
+    static func tableData(for entries: [SecretListEntry]) -> TableData {
+        let columns = [
+            TableColumn(title: "name", width: .flexible(min: 8, max: 40), alignment: .left),
+            TableColumn(title: "date modified", width: .fixed(16), alignment: .left),
+            TableColumn(title: "group name", width: .flexible(min: 12), alignment: .left),
+        ]
+        let rows = entries.map(tableRow(for:))
+        return TableData(columns: columns, rows: rows)
+    }
+
+    static func tableRow(for entry: SecretListEntry) -> [TerminalText] {
+        [
+            TerminalText(stringLiteral: entry.reference.name),
+            TerminalText(stringLiteral: formattedModificationDate(entry.modificationDate)),
+            TerminalText(stringLiteral: entry.reference.scope.displayPath),
+        ]
+    }
+
+    static func formattedModificationDate(_ date: Date?) -> String {
+        guard let date else {
+            return "--"
+        }
+
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "yyyy-MM-dd HH:mm"
+        return formatter.string(from: date)
     }
 }

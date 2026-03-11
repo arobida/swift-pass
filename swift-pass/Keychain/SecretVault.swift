@@ -118,10 +118,14 @@ struct SecretVault {
         return try secretStore.removeSecret(at: reference)
     }
 
-    func secretNames(in scope: SecretScope) throws -> [String] {
+    func secretListEntries(in scope: SecretScope) throws -> [SecretListEntry] {
         let catalog = try loadCatalogForRead()
         try ensureScopeExists(scope, in: catalog)
-        return try secretStore.secretNames(in: scope)
+        return try secretStore.secretListEntries(in: scope)
+    }
+
+    func secretNames(in scope: SecretScope) throws -> [String] {
+        try secretListEntries(in: scope).map(\.reference.name)
     }
 
     private func ensureScopeExistsForWrite(_ scope: SecretScope) throws {
@@ -192,7 +196,7 @@ struct SecretVault {
     }
 
     private func bootstrapCatalog() throws -> GroupCatalog {
-        var catalog = GroupCatalog.bootstrappedDefault()
+        let catalog = GroupCatalog.bootstrappedDefault()
         let defaultScope = try SecretScope(group: catalog.defaultGroup)
         let legacyEntries = try secretStore.legacySecretEntries()
 
