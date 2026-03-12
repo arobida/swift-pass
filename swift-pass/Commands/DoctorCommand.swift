@@ -2,6 +2,18 @@ import ArgumentParser
 import Foundation
 import Noora
 
+private enum DoctorCheckLevel {
+    case success
+    case warning
+    case error
+}
+
+private struct DoctorCheckResult {
+    let level: DoctorCheckLevel
+    let title: TerminalText
+    let takeaway: TerminalText?
+}
+
 struct DoctorCommand: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "doctor",
@@ -12,156 +24,190 @@ struct DoctorCommand: AsyncParsableCommand {
     func run() async throws {
         let vault = SecretVault()
         let store = ValetSecretStore()
-        let catalogStore = KeychainGroupCatalogStore()
         let expectedServiceName = store.configuration.serviceName
-        let metadataServiceName = catalogStore.configuration.serviceName
+        let metadataServiceName = KeychainGroupCatalogStore().configuration.serviceName
         let signingStatus = try? CurrentProcessSigningInspector().inspect()
         let hasExpectedSigning = signingStatus?.hasExpectedKeychainEntitlements(for: expectedServiceName) ?? false
+        let canAccessSecretStore = vault.canAccessSecretStore()
+        let canAccessCatalogStore = vault.canAccessCatalogStore()
 
-        if signingStatus == nil {
-            Noora().warning(
-                .alert(
-                    "Could not inspect signing information",
-                    takeaway: "Run the Xcode-generated binary directly if you want doctor to confirm the signed application identifier."
+        let keychainResult = keychainCheckResult(
+            signingStatus: signingStatus,
+            hasExpectedSigning: hasExpectedSigning,
+            canAccessSecretStore: canAccessSecretStore,
+            canAccessCatalogStore: canAccessCatalogStore,
+            metadataServiceName: metadataServiceName
+        )
+
+        let results: [DoctorCheckResult]
+
+        if keychainResult.level == .error {
+            results = [
+                keychainResult,
+                DoctorCheckResult(
+                    level: .error,
+                    title: "Default group could not be verified.",
+                    takeaway: "Fix the Keychain integration first, then rerun \(TerminalText.Component.command("swift-pass doctor"))."
                 ),
-                .alert(
-                    "Keychain access still needs to be verified",
-                    takeaway: "Rerun \(.command("doctor")) from a built executable after signing is configured."
-                )
-            )
+                DoctorCheckResult(
+                    level: .error,
+                    title: "Secret parent groups could not be verified.",
+                    takeaway: "Fix the Keychain integration first, then rerun \(TerminalText.Component.command("swift-pass doctor"))."
+                ),
+            ]
+        } else {
+            let status = try vault.doctorStatus()
+            results = [
+                keychainResult,
+                defaultGroupCheckResult(for: status),
+                secretParentageCheckResult(for: status),
+            ]
+        }
 
-            return
+        let noora = Noora()
+
+        for result in results {
+            render(result, using: noora)
+        }
+    }
+
+    private func keychainCheckResult(
+        signingStatus: CurrentProcessSigningStatus?,
+        hasExpectedSigning: Bool,
+        canAccessSecretStore: Bool,
+        canAccessCatalogStore: Bool,
+        metadataServiceName: String
+    ) -> DoctorCheckResult {
+        guard let signingStatus else {
+            if canAccessSecretStore && canAccessCatalogStore {
+                return DoctorCheckResult(
+                    level: .warning,
+                    title: "Keychain integration is working.",
+                    takeaway: "swift-pass could not inspect this binary’s signing details. Run the built executable directly if you want to verify that too."
+                )
+            }
+
+            return DoctorCheckResult(
+                level: .error,
+                title: "Keychain integration is not working.",
+                takeaway: "swift-pass could not verify this binary’s signing details or access its Keychain storage."
+            )
         }
 
         guard hasExpectedSigning else {
-            Noora().warning(
-                .alert(
-                    "Current executable is not signed for the expected identifier",
-                    takeaway: "The running binary at '\(signingStatus?.executablePath ?? CommandLine.arguments[0])' does not embed the expected '\(expectedServiceName)' application identifier."
-                ),
-                .alert(
-                    "Run the signed Xcode build",
-                    takeaway: "Build with `xcodebuild -project \"swift-pass.xcodeproj\" -scheme \"swift-pass\" -configuration Debug -derivedDataPath Build build` and rerun the built executable from `Build/Products/Debug/swift-pass`."
-                )
+            return DoctorCheckResult(
+                level: .error,
+                title: "Keychain integration is not working.",
+                takeaway: "The binary at '\(signingStatus.executablePath)' is not signed for this installation. Rebuild and run the generated executable again."
             )
-
-            return
         }
 
-        guard vault.canAccessSecretStore() else {
-            Noora().warning(
-                .alert(
-                    "Keychain access is not available",
-                    takeaway: "Valet is configured with the '\(expectedServiceName)' service identifier."
-                ),
-                .alert(
-                    "Current environment cannot open the Keychain",
-                    takeaway: "This can happen in a restricted or non-interactive session even when the binary is signed correctly."
-                ),
-                .alert(
-                    "Verify from your normal login session",
-                    takeaway: "Rerun \(.command("doctor")) from Xcode or Terminal while signed into your macOS desktop session."
-                )
+        guard canAccessSecretStore else {
+            return DoctorCheckResult(
+                level: .error,
+                title: "Keychain integration is not working.",
+                takeaway: "swift-pass could not access its secret storage. Run it from your normal signed-in macOS session and try again."
             )
-
-            return
         }
 
-        guard vault.canAccessCatalogStore() else {
-            Noora().warning(
-                .alert(
-                    "Metadata Keychain access is not available",
-                    takeaway: "swift-pass uses '\(metadataServiceName)' to store group and default-group metadata."
-                ),
-                .alert(
-                    "Current environment cannot open the metadata Keychain store",
-                    takeaway: "Try rerunning \(.command("doctor")) from your normal signed desktop session."
-                )
+        guard canAccessCatalogStore else {
+            return DoctorCheckResult(
+                level: .error,
+                title: "Keychain integration is not working.",
+                takeaway: "swift-pass could not access its group metadata store '\(metadataServiceName)'."
             )
-
-            return
         }
 
-        let catalogStatus: TerminalText
-
-        do {
-            let status = try vault.doctorStatus()
-            let alerts = warningAlerts(for: status)
-
-            if !alerts.isEmpty {
-                Noora().warning(alerts)
-
-                return
-            }
-
-            guard let catalog = status.catalog else {
-                throw GroupCatalogError.defaultGroupNotConfigured
-            }
-            catalogStatus = "The group catalog is readable and the default group is '\(catalog.defaultGroup)'."
-        } catch {
-            Noora().warning(
-                .alert(
-                    "swift-pass could not complete the storage audit",
-                    takeaway: TerminalText(stringLiteral: error.localizedDescription)
-                ),
-                .alert(
-                    "Keychain access is available",
-                    takeaway: "The Keychain services are reachable, but swift-pass could not verify group metadata and secret parentage."
-                )
-            )
-
-            return
-        }
-
-        Noora().success(
-            .alert(
-                "Keychain setup looks good",
-                takeaways: [
-                    "swift-argument-parser is set up and parsing commands correctly.",
-                    "Noora is available for interactive terminal output.",
-                    "The running executable is signed with the expected application identifier for '\(expectedServiceName)'.",
-                    "Valet can access the Keychain with the '\(expectedServiceName)' service identifier.",
-                    "swift-pass can access the metadata Keychain store '\(metadataServiceName)'.",
-                    catalogStatus,
-                    "All stored secrets belong to a configured group.",
-                ]
-            )
+        return DoctorCheckResult(
+            level: .success,
+            title: "Keychain integration is working.",
+            takeaway: nil
         )
     }
 
-    private func warningAlerts(for status: DoctorStatus) -> [WarningAlert] {
-        var alerts: [WarningAlert] = []
-
-        if status.catalog == nil {
-            alerts.append(
-                WarningAlert.alert(
-                    "No default group is configured.",
-                    takeaway: "Run \(TerminalText.Component.command("swift-pass create default")) to initialize the group catalog."
-                )
+    private func defaultGroupCheckResult(for status: DoctorStatus) -> DoctorCheckResult {
+        guard let catalog = status.catalog else {
+            return DoctorCheckResult(
+                level: .warning,
+                title: "No default group is configured.",
+                takeaway: "Run \(TerminalText.Component.command("swift-pass create default")) to initialize it."
             )
         }
 
+        return DoctorCheckResult(
+            level: .success,
+            title: "Default group is configured.",
+            takeaway: "Default group: '\(catalog.defaultGroup)'."
+        )
+    }
+
+    private func secretParentageCheckResult(for status: DoctorStatus) -> DoctorCheckResult {
         let orphanedReferences = status.orphanedSecretReferences
+        let legacyEntries = status.legacySecretEntries
 
-        if !orphanedReferences.isEmpty {
-            alerts.append(
-                WarningAlert.alert(
-                    "Found \(orphanedReferences.count) scoped secret\(orphanedReferences.count == 1 ? "" : "s") without a parent group: \(formattedSecretPaths(orphanedReferences.map(\.displayPath))).",
-                    takeaway: "Create the missing group or subgroup before relying on those secrets."
+        guard orphanedReferences.isEmpty, legacyEntries.isEmpty else {
+            if !orphanedReferences.isEmpty, !legacyEntries.isEmpty {
+                return DoctorCheckResult(
+                    level: .warning,
+                    title: "Some secrets are not attached to configured groups.",
+                    takeaway: "Scoped secrets without a parent: \(formattedSecretPaths(orphanedReferences.map(\.displayPath))). Legacy secrets still awaiting migration: \(formattedSecretPaths(legacyEntries.map(\.name)))."
                 )
+            }
+
+            if !orphanedReferences.isEmpty {
+                return DoctorCheckResult(
+                    level: .warning,
+                    title: "Some secrets are not attached to configured groups.",
+                    takeaway: "Missing parent group or subgroup for: \(formattedSecretPaths(orphanedReferences.map(\.displayPath)))."
+                )
+            }
+
+            return DoctorCheckResult(
+                level: .warning,
+                title: "Some secrets are not attached to configured groups.",
+                takeaway: "Legacy secrets still awaiting migration: \(formattedSecretPaths(legacyEntries.map(\.name)))."
             )
         }
 
-        if !status.legacySecretEntries.isEmpty {
-            alerts.append(
-                WarningAlert.alert(
-                    "Found \(status.legacySecretEntries.count) legacy secret\(status.legacySecretEntries.count == 1 ? "" : "s") without group metadata: \(formattedSecretPaths(status.legacySecretEntries.map(\.name))).",
-                    takeaway: "Run \(TerminalText.Component.command("swift-pass create default")) or store a new secret to migrate legacy entries into the default group."
+        return DoctorCheckResult(
+            level: .success,
+            title: "All secrets belong to configured groups.",
+            takeaway: nil
+        )
+    }
+
+    private func render(_ result: DoctorCheckResult, using noora: Noora) {
+        switch result.level {
+        case .success:
+            noora.success(
+                .alert(
+                    result.title,
+                    takeaways: takeaways(for: result)
+                )
+            )
+        case .warning:
+            noora.warning(
+                .alert(
+                    result.title,
+                    takeaway: result.takeaway
+                )
+            )
+        case .error:
+            noora.error(
+                .alert(
+                    result.title,
+                    takeaways: takeaways(for: result)
                 )
             )
         }
+    }
 
-        return alerts
+    private func takeaways(for result: DoctorCheckResult) -> [TerminalText] {
+        guard let takeaway = result.takeaway else {
+            return []
+        }
+
+        return [takeaway]
     }
 
     private func formattedSecretPaths(_ paths: [String], limit: Int = 5) -> TerminalText {
