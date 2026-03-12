@@ -10,15 +10,12 @@ struct KeychainAccessProbe {
 
     func canAccess() -> Bool {
         let accountName = "\(accountPrefix).\(UUID().uuidString)"
-        let itemQuery = serviceQuery(accountName: accountName)
-        let addQuery = itemQuery.merging(
-            [
-                kSecAttrAccessible as String: accessibility,
-                kSecValueData as String: Self.probeValue,
-            ]
-        ) { _, newValue in
-            newValue
-        }
+        let builder = KeychainQueryBuilder(serviceName: serviceName)
+        let itemQuery = builder.serviceQuery(accountName: accountName)
+        let addQuery = itemQuery.mergeOverwriting([
+            kSecAttrAccessible as String: accessibility,
+            kSecValueData as String: Self.probeValue,
+        ])
 
         let addStatus = SecItemAdd(addQuery as CFDictionary, nil)
 
@@ -31,14 +28,10 @@ struct KeychainAccessProbe {
         }
 
         var result: CFTypeRef?
-        let readQuery = itemQuery.merging(
-            [
-                kSecMatchLimit as String: kSecMatchLimitOne,
-                kSecReturnData as String: true,
-            ]
-        ) { _, newValue in
-            newValue
-        }
+        let readQuery = itemQuery.mergeOverwriting([
+            kSecMatchLimit as String: kSecMatchLimitOne,
+            kSecReturnData as String: true,
+        ])
         let readStatus = SecItemCopyMatching(readQuery as CFDictionary, &result)
 
         guard readStatus == errSecSuccess, let data = result as? Data else {
@@ -46,13 +39,5 @@ struct KeychainAccessProbe {
         }
 
         return data == Self.probeValue
-    }
-
-    private func serviceQuery(accountName: String) -> [String: Any] {
-        [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: serviceName,
-            kSecAttrAccount as String: accountName,
-        ]
     }
 }

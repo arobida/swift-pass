@@ -70,17 +70,7 @@ struct SecretReference: Codable, Equatable, Hashable {
     }
 
     private static func validatedName(_ value: String) throws -> String {
-        let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
-
-        guard !trimmed.isEmpty else {
-            throw GroupCatalogError.invalidIdentifier(kind: "secret name", value: value)
-        }
-
-        guard !trimmed.contains(":") && !trimmed.contains("=") else {
-            throw GroupCatalogError.invalidIdentifier(kind: "secret name", value: trimmed)
-        }
-
-        return trimmed
+        try SecretScope.validatedIdentifier(value, kind: "secret name")
     }
 }
 

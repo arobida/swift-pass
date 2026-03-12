@@ -93,14 +93,10 @@ struct ValetSecretStore: SecretStore {
 
     private func secretValue(accountName: String, label: String) throws -> String {
         var result: CFTypeRef?
-        let query: [String: Any] = itemQuery(for: accountName).merging(
-            [
-                kSecMatchLimit as String: kSecMatchLimitOne,
-                kSecReturnData as String: true,
-            ]
-        ) { _, newValue in
-            newValue
-        }
+        let query = itemQuery(for: accountName).mergeOverwriting([
+            kSecMatchLimit as String: kSecMatchLimitOne,
+            kSecReturnData as String: true,
+        ])
         let status = SecItemCopyMatching(query as CFDictionary, &result)
 
         switch status {
@@ -142,14 +138,10 @@ struct ValetSecretStore: SecretStore {
 
     private func allItemAttributes() throws -> [KeychainItemAttributes] {
         var result: CFTypeRef?
-        let query: [String: Any] = serviceQuery().merging(
-            [
-                kSecMatchLimit as String: kSecMatchLimitAll,
-                kSecReturnAttributes as String: true,
-            ]
-        ) { _, newValue in
-            newValue
-        }
+        let query = queryBuilder.serviceQuery().mergeOverwriting([
+            kSecMatchLimit as String: kSecMatchLimitAll,
+            kSecReturnAttributes as String: true,
+        ])
         let status = SecItemCopyMatching(query as CFDictionary, &result)
 
         switch status {
@@ -165,28 +157,19 @@ struct ValetSecretStore: SecretStore {
         }
     }
 
-    private func serviceQuery() -> [String: Any] {
-        [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: configuration.serviceName,
-        ]
+    private var queryBuilder: KeychainQueryBuilder {
+        KeychainQueryBuilder(serviceName: configuration.serviceName)
     }
 
     private func itemQuery(for name: String) -> [String: Any] {
-        serviceQuery().merging([kSecAttrAccount as String: name]) { _, newValue in
-            newValue
-        }
+        queryBuilder.serviceQuery(accountName: name)
     }
 
     private func addQuery(for name: String, data: Data) -> [String: Any] {
-        itemQuery(for: name).merging(
-            [
-                kSecAttrAccessible as String: configuration.securityAccessibility,
-                kSecValueData as String: data,
-            ]
-        ) { _, newValue in
-            newValue
-        }
+        itemQuery(for: name).mergeOverwriting([
+            kSecAttrAccessible as String: configuration.securityAccessibility,
+            kSecValueData as String: data,
+        ])
     }
 
     private func itemAttributes(from result: CFTypeRef?) throws -> [KeychainItemAttributes] {

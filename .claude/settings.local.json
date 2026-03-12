@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__xcode__XcodeListWindows",
+      "Bash(xcodebuild -project swift-pass.xcodeproj -scheme swift-pass -destination 'platform=macOS' build 2>&1 | tail -30)",
+      "Bash(xcodebuild -project swift-pass.xcodeproj -scheme swift-pass -destination 'platform=macOS' build 2>&1 | grep -E \"\\(error:|warning:|BUILD SUCCEEDED|BUILD FAILED\\)\")"
+    ]
+  }
+}

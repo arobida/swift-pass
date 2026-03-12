@@ -77,33 +77,29 @@ struct KeychainGroupCatalogStore: GroupCatalogStore {
         }
     }
 
+    private var queryBuilder: KeychainQueryBuilder {
+        KeychainQueryBuilder(serviceName: configuration.serviceName)
+    }
+
     private func serviceQuery() -> [String: Any] {
-        [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: configuration.serviceName,
-            kSecAttrAccount as String: accountName,
-        ]
+        queryBuilder.serviceQuery(accountName: accountName)
     }
 
     private func query(returnData: Bool) -> [String: Any] {
-        var query = serviceQuery()
-
-        if returnData {
-            query[kSecMatchLimit as String] = kSecMatchLimitOne
-            query[kSecReturnData as String] = true
+        guard returnData else {
+            return serviceQuery()
         }
 
-        return query
+        return serviceQuery().mergeOverwriting([
+            kSecMatchLimit as String: kSecMatchLimitOne,
+            kSecReturnData as String: true,
+        ])
     }
 
     private func addQuery(data: Data) -> [String: Any] {
-        serviceQuery().merging(
-            [
-                kSecAttrAccessible as String: configuration.securityAccessibility,
-                kSecValueData as String: data,
-            ]
-        ) { _, newValue in
-            newValue
-        }
+        serviceQuery().mergeOverwriting([
+            kSecAttrAccessible as String: configuration.securityAccessibility,
+            kSecValueData as String: data,
+        ])
     }
 }
