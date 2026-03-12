@@ -11,6 +11,12 @@ struct ListCommand: AsyncParsableCommand {
     )
 
     private static let interactivePageSize = 10
+    private static let modificationDateFormat = Date.VerbatimFormatStyle(
+        format: "\(year: .defaultDigits)-\(month: .twoDigits)-\(day: .twoDigits) \(hour: .twoDigits(clock: .twentyFourHour, hourCycle: .zeroBased)):\(minute: .twoDigits)",
+        locale: Locale(identifier: "en_US_POSIX"),
+        timeZone: .current,
+        calendar: Calendar(identifier: .gregorian)
+    )
 
     @Argument(help: "The scope to list in the format <group> or <group>:<subgroup>.")
     var scope: String?
@@ -103,9 +109,6 @@ struct ListCommand: AsyncParsableCommand {
             return "--"
         }
 
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.dateFormat = "yyyy-MM-dd HH:mm"
-        return formatter.string(from: date)
+        return date.formatted(Self.modificationDateFormat)
     }
 }

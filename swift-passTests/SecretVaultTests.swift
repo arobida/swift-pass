@@ -200,6 +200,45 @@ final class SecretVaultTests: XCTestCase {
         )
     }
 
+    func testSubgroupListEntriesAggregateMultipleSecretsPerScope() throws {
+        let secretStore = InMemorySecretStore()
+        let vault = SecretVault(
+            secretStore: secretStore,
+            catalogStore: InMemoryGroupCatalogStore(
+                catalog: GroupCatalog(
+                    schemaVersion: GroupCatalog.currentSchemaVersion,
+                    defaultGroup: "default",
+                    groups: [
+                        .init(name: "default", subgroups: []),
+                        .init(name: "project", subgroups: ["dev", "prod"]),
+                    ]
+                )
+            ),
+            prompter: StubPrompter(),
+            environment: .init(isInteractive: true)
+        )
+        secretStore.scopedValues[try SecretReference(scope: SecretScope(group: "project"), name: "group-only")] = "token"
+        secretStore.scopedValues[try SecretReference(scope: SecretScope(group: "project", subgroup: "dev"), name: "openai")] = "token"
+        secretStore.scopedValues[try SecretReference(scope: SecretScope(group: "project", subgroup: "dev"), name: "github")] = "token"
+        secretStore.scopedValues[try SecretReference(scope: SecretScope(group: "project", subgroup: "prod"), name: "stripe")] = "token"
+
+        let entries = try vault.subgroupListEntries(in: "project")
+
+        XCTAssertEqual(
+            entries,
+            [
+                SubgroupListEntry(
+                    scope: try SecretScope(group: "project", subgroup: "dev"),
+                    secretCount: 2
+                ),
+                SubgroupListEntry(
+                    scope: try SecretScope(group: "project", subgroup: "prod"),
+                    secretCount: 1
+                ),
+            ]
+        )
+    }
+
     func testSubgroupListEntriesThrowWhenGroupDoesNotExist() {
         let vault = SecretVault(
             secretStore: InMemorySecretStore(),

@@ -157,7 +157,7 @@ struct SecretVault {
             return []
         }
 
-        let references = try secretStore.allSecretReferences()
+        let secretCounts = try exactSecretCountsByScope()
         var entries: [GroupListEntry] = []
 
         for group in catalog.groups {
@@ -166,9 +166,7 @@ struct SecretVault {
                 GroupListEntry(
                     group: group.name,
                     subgroups: group.subgroups,
-                    secretCount: references.filter { reference in
-                        reference.scope == scope
-                    }.count
+                    secretCount: secretCounts[scope] ?? 0
                 )
             )
         }
@@ -187,7 +185,7 @@ struct SecretVault {
             throw GroupCatalogError.groupNotFound(validatedGroup)
         }
 
-        let references = try secretStore.allSecretReferences()
+        let secretCounts = try exactSecretCountsByScope()
         var entries: [SubgroupListEntry] = []
 
         for subgroup in group.subgroups {
@@ -195,9 +193,7 @@ struct SecretVault {
             entries.append(
                 SubgroupListEntry(
                     scope: scope,
-                    secretCount: references.filter { reference in
-                        reference.scope == scope
-                    }.count
+                    secretCount: secretCounts[scope] ?? 0
                 )
             )
         }
@@ -262,6 +258,16 @@ struct SecretVault {
         }
 
         return catalog
+    }
+
+    private func exactSecretCountsByScope() throws -> [SecretScope: Int] {
+        var counts: [SecretScope: Int] = [:]
+
+        for reference in try secretStore.allSecretReferences() {
+            counts[reference.scope, default: 0] += 1
+        }
+
+        return counts
     }
 
     private func catalogForWrite() throws -> GroupCatalog {

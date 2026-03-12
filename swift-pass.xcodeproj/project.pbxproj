@@ -20,7 +20,6 @@
 		C0B000000000000000000012 /* swift-pass/Commands/DeleteCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000003 /* swift-pass/Commands/DeleteCommand.swift */; };
 		C0B000000000000000000013 /* swift-pass/Commands/DoctorCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000004 /* swift-pass/Commands/DoctorCommand.swift */; };
 		C0B000000000000000000014 /* swift-pass/Commands/GetCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000005 /* swift-pass/Commands/GetCommand.swift */; };
-		C0B000000000000000000023 /* swift-pass/Commands/GroupsCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000014 /* swift-pass/Commands/GroupsCommand.swift */; };
 		C0B000000000000000000015 /* swift-pass/Commands/ListCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000006 /* swift-pass/Commands/ListCommand.swift */; };
 		C0B000000000000000000016 /* swift-pass/Commands/SetCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000007 /* swift-pass/Commands/SetCommand.swift */; };
 		C0B000000000000000000017 /* swift-pass/Keychain/CurrentProcessSigningInspector.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000008 /* swift-pass/Keychain/CurrentProcessSigningInspector.swift */; };
@@ -35,6 +34,7 @@
 		C0B000000000000000000020 /* swift-pass/Keychain/ValetSecretStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000011 /* swift-pass/Keychain/ValetSecretStore.swift */; };
 		C0B000000000000000000021 /* swift-pass/Support/UserPrompter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000012 /* swift-pass/Support/UserPrompter.swift */; };
 		C0B000000000000000000022 /* swift-pass/Keychain/KeychainAccessProbe.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000013 /* swift-pass/Keychain/KeychainAccessProbe.swift */; };
+		C0B000000000000000000023 /* swift-pass/Commands/GroupsCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000014 /* swift-pass/Commands/GroupsCommand.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -75,7 +75,6 @@
 		C0A000000000000000000003 /* swift-pass/Commands/DeleteCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Commands/DeleteCommand.swift"; sourceTree = SOURCE_ROOT; };
 		C0A000000000000000000004 /* swift-pass/Commands/DoctorCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Commands/DoctorCommand.swift"; sourceTree = SOURCE_ROOT; };
 		C0A000000000000000000005 /* swift-pass/Commands/GetCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Commands/GetCommand.swift"; sourceTree = SOURCE_ROOT; };
-		C0A000000000000000000014 /* swift-pass/Commands/GroupsCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Commands/GroupsCommand.swift"; sourceTree = SOURCE_ROOT; };
 		C0A000000000000000000006 /* swift-pass/Commands/ListCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Commands/ListCommand.swift"; sourceTree = SOURCE_ROOT; };
 		C0A000000000000000000007 /* swift-pass/Commands/SetCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Commands/SetCommand.swift"; sourceTree = SOURCE_ROOT; };
 		C0A000000000000000000008 /* swift-pass/Keychain/CurrentProcessSigningInspector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Keychain/CurrentProcessSigningInspector.swift"; sourceTree = SOURCE_ROOT; };
@@ -90,6 +89,7 @@
 		C0A000000000000000000011 /* swift-pass/Keychain/ValetSecretStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Keychain/ValetSecretStore.swift"; sourceTree = SOURCE_ROOT; };
 		C0A000000000000000000012 /* swift-pass/Support/UserPrompter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Support/UserPrompter.swift"; sourceTree = SOURCE_ROOT; };
 		C0A000000000000000000013 /* swift-pass/Keychain/KeychainAccessProbe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Keychain/KeychainAccessProbe.swift"; sourceTree = SOURCE_ROOT; };
+		C0A000000000000000000014 /* swift-pass/Commands/GroupsCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Commands/GroupsCommand.swift"; sourceTree = SOURCE_ROOT; };
 		C0F000000000000000000001 /* libswift-passCore.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libswift-passCore.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 

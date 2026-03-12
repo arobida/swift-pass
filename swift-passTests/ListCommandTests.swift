@@ -35,6 +35,12 @@ final class ListCommandTests: XCTestCase {
         XCTAssertEqual(ListCommand.formattedModificationDate(nil), "--")
     }
 
+    func testFormattedModificationDateUsesStableTimestampFormat() {
+        let date = Date(timeIntervalSince1970: 1_736_082_000)
+
+        XCTAssertEqual(ListCommand.formattedModificationDate(date), "2025-01-05 15:00")
+    }
+
     func testTableRowShowsFullScopePathForSubgroupSecret() throws {
         let entry = try makeEntry(
             scope: SecretScope(group: "project", subgroup: "dev"),
