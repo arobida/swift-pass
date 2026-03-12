@@ -112,6 +112,107 @@ final class SecretVaultTests: XCTestCase {
         )
     }
 
+    func testGroupListEntriesReturnsEmptyArrayWhenCatalogIsMissing() throws {
+        let vault = SecretVault(
+            secretStore: InMemorySecretStore(),
+            catalogStore: InMemoryGroupCatalogStore(),
+            prompter: StubPrompter(),
+            environment: .init(isInteractive: true)
+        )
+
+        XCTAssertEqual(try vault.groupListEntries(), [])
+    }
+
+    func testGroupListEntriesIncludeSubgroupsAndDirectSecretCount() throws {
+        let secretStore = InMemorySecretStore()
+        let vault = SecretVault(
+            secretStore: secretStore,
+            catalogStore: InMemoryGroupCatalogStore(
+                catalog: GroupCatalog(
+                    schemaVersion: GroupCatalog.currentSchemaVersion,
+                    defaultGroup: "default",
+                    groups: [
+                        .init(name: "default", subgroups: []),
+                        .init(name: "project", subgroups: ["dev", "prod"]),
+                    ]
+                )
+            ),
+            prompter: StubPrompter(),
+            environment: .init(isInteractive: true)
+        )
+        secretStore.scopedValues[try SecretReference(scope: SecretScope(group: "project"), name: "github")] = "token"
+        secretStore.scopedValues[try SecretReference(scope: SecretScope(group: "project", subgroup: "dev"), name: "openai")] = "token"
+
+        let entries = try vault.groupListEntries()
+
+        XCTAssertEqual(
+            entries,
+            [
+                GroupListEntry(
+                    group: "default",
+                    subgroups: [],
+                    secretCount: 0
+                ),
+                GroupListEntry(
+                    group: "project",
+                    subgroups: ["dev", "prod"],
+                    secretCount: 1
+                ),
+            ]
+        )
+    }
+
+    func testSubgroupListEntriesShowOnlySubgroupsForRequestedGroup() throws {
+        let secretStore = InMemorySecretStore()
+        let vault = SecretVault(
+            secretStore: secretStore,
+            catalogStore: InMemoryGroupCatalogStore(
+                catalog: GroupCatalog(
+                    schemaVersion: GroupCatalog.currentSchemaVersion,
+                    defaultGroup: "default",
+                    groups: [
+                        .init(name: "default", subgroups: []),
+                        .init(name: "project", subgroups: ["dev", "prod"]),
+                    ]
+                )
+            ),
+            prompter: StubPrompter(),
+            environment: .init(isInteractive: true)
+        )
+        secretStore.scopedValues[try SecretReference(scope: SecretScope(group: "project", subgroup: "dev"), name: "openai")] = "token"
+        secretStore.scopedValues[try SecretReference(scope: SecretScope(group: "project", subgroup: "prod"), name: "github")] = "token"
+        secretStore.scopedValues[try SecretReference(scope: SecretScope(group: "project"), name: "group-only")] = "token"
+
+        let entries = try vault.subgroupListEntries(in: "project")
+
+        XCTAssertEqual(
+            entries,
+            [
+                SubgroupListEntry(
+                    scope: try SecretScope(group: "project", subgroup: "dev"),
+                    secretCount: 1
+                ),
+                SubgroupListEntry(
+                    scope: try SecretScope(group: "project", subgroup: "prod"),
+                    secretCount: 1
+                ),
+            ]
+        )
+    }
+
+    func testSubgroupListEntriesThrowWhenGroupDoesNotExist() {
+        let vault = SecretVault(
+            secretStore: InMemorySecretStore(),
+            catalogStore: InMemoryGroupCatalogStore(catalog: GroupCatalog.bootstrappedDefault()),
+            prompter: StubPrompter(),
+            environment: .init(isInteractive: true)
+        )
+
+        XCTAssertThrowsError(try vault.subgroupListEntries(in: "missing")) { error in
+            XCTAssertEqual(error.localizedDescription, GroupCatalogError.groupNotFound("missing").localizedDescription)
+        }
+    }
+
     func testResolveScopeUsesConfiguredDefaultGroupWhenListGroupIsOmitted() throws {
         let vault = SecretVault(
             secretStore: InMemorySecretStore(),

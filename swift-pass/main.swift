@@ -13,6 +13,7 @@ struct SwiftPass: AsyncParsableCommand {
             GetCommand.self,
             DeleteCommand.self,
             ListCommand.self,
+            GroupsCommand.self,
             DoctorCommand.self,
         ]
     )

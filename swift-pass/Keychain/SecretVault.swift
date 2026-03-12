@@ -152,6 +152,59 @@ struct SecretVault {
         try secretListEntries(in: scope).map(\.reference.name)
     }
 
+    func groupListEntries() throws -> [GroupListEntry] {
+        guard let catalog = try catalogStore.catalog() else {
+            return []
+        }
+
+        let references = try secretStore.allSecretReferences()
+        var entries: [GroupListEntry] = []
+
+        for group in catalog.groups {
+            let scope = try SecretScope(group: group.name)
+            entries.append(
+                GroupListEntry(
+                    group: group.name,
+                    subgroups: group.subgroups,
+                    secretCount: references.filter { reference in
+                        reference.scope == scope
+                    }.count
+                )
+            )
+        }
+
+        return entries
+    }
+
+    func subgroupListEntries(in groupName: String) throws -> [SubgroupListEntry] {
+        let validatedGroup = try SecretScope.validatedIdentifier(groupName, kind: "group")
+
+        guard let catalog = try catalogStore.catalog() else {
+            throw GroupCatalogError.groupNotFound(validatedGroup)
+        }
+
+        guard let group = catalog.groups.first(where: { $0.name == validatedGroup }) else {
+            throw GroupCatalogError.groupNotFound(validatedGroup)
+        }
+
+        let references = try secretStore.allSecretReferences()
+        var entries: [SubgroupListEntry] = []
+
+        for subgroup in group.subgroups {
+            let scope = try SecretScope(group: group.name, subgroup: subgroup)
+            entries.append(
+                SubgroupListEntry(
+                    scope: scope,
+                    secretCount: references.filter { reference in
+                        reference.scope == scope
+                    }.count
+                )
+            )
+        }
+
+        return entries
+    }
+
     private func ensureScopeExistsForWrite(_ scope: SecretScope) throws {
         var catalog = try catalogForWrite()
 

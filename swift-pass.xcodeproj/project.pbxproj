@@ -20,6 +20,7 @@
 		C0B000000000000000000012 /* swift-pass/Commands/DeleteCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000003 /* swift-pass/Commands/DeleteCommand.swift */; };
 		C0B000000000000000000013 /* swift-pass/Commands/DoctorCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000004 /* swift-pass/Commands/DoctorCommand.swift */; };
 		C0B000000000000000000014 /* swift-pass/Commands/GetCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000005 /* swift-pass/Commands/GetCommand.swift */; };
+		C0B000000000000000000023 /* swift-pass/Commands/GroupsCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000014 /* swift-pass/Commands/GroupsCommand.swift */; };
 		C0B000000000000000000015 /* swift-pass/Commands/ListCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000006 /* swift-pass/Commands/ListCommand.swift */; };
 		C0B000000000000000000016 /* swift-pass/Commands/SetCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000007 /* swift-pass/Commands/SetCommand.swift */; };
 		C0B000000000000000000017 /* swift-pass/Keychain/CurrentProcessSigningInspector.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A000000000000000000008 /* swift-pass/Keychain/CurrentProcessSigningInspector.swift */; };
@@ -74,6 +75,7 @@
 		C0A000000000000000000003 /* swift-pass/Commands/DeleteCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Commands/DeleteCommand.swift"; sourceTree = SOURCE_ROOT; };
 		C0A000000000000000000004 /* swift-pass/Commands/DoctorCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Commands/DoctorCommand.swift"; sourceTree = SOURCE_ROOT; };
 		C0A000000000000000000005 /* swift-pass/Commands/GetCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Commands/GetCommand.swift"; sourceTree = SOURCE_ROOT; };
+		C0A000000000000000000014 /* swift-pass/Commands/GroupsCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Commands/GroupsCommand.swift"; sourceTree = SOURCE_ROOT; };
 		C0A000000000000000000006 /* swift-pass/Commands/ListCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Commands/ListCommand.swift"; sourceTree = SOURCE_ROOT; };
 		C0A000000000000000000007 /* swift-pass/Commands/SetCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Commands/SetCommand.swift"; sourceTree = SOURCE_ROOT; };
 		C0A000000000000000000008 /* swift-pass/Keychain/CurrentProcessSigningInspector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-pass/Keychain/CurrentProcessSigningInspector.swift"; sourceTree = SOURCE_ROOT; };
@@ -145,6 +147,7 @@
 				C0A000000000000000000003 /* swift-pass/Commands/DeleteCommand.swift */,
 				C0A000000000000000000004 /* swift-pass/Commands/DoctorCommand.swift */,
 				C0A000000000000000000005 /* swift-pass/Commands/GetCommand.swift */,
+				C0A000000000000000000014 /* swift-pass/Commands/GroupsCommand.swift */,
 				C0A000000000000000000006 /* swift-pass/Commands/ListCommand.swift */,
 				C0A000000000000000000007 /* swift-pass/Commands/SetCommand.swift */,
 				C0A000000000000000000008 /* swift-pass/Keychain/CurrentProcessSigningInspector.swift */,
@@ -339,6 +342,7 @@
 				C0B000000000000000000012 /* swift-pass/Commands/DeleteCommand.swift in Sources */,
 				C0B000000000000000000013 /* swift-pass/Commands/DoctorCommand.swift in Sources */,
 				C0B000000000000000000014 /* swift-pass/Commands/GetCommand.swift in Sources */,
+				C0B000000000000000000023 /* swift-pass/Commands/GroupsCommand.swift in Sources */,
 				C0B000000000000000000015 /* swift-pass/Commands/ListCommand.swift in Sources */,
 				C0B000000000000000000016 /* swift-pass/Commands/SetCommand.swift in Sources */,
 				C0B000000000000000000017 /* swift-pass/Keychain/CurrentProcessSigningInspector.swift in Sources */,

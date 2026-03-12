@@ -20,10 +20,12 @@ Current subcommands:
 - `get`
 - `delete`
 - `list`
+- `groups`
 - `doctor`
 
 Right now:
 - `create`, `set`, `get`, `delete`, and `list` perform real macOS Keychain operations
+- `groups` lists created groups, or the subgroups in a specific group
 - `doctor` performs environment and signing checks for Keychain access
 - `set` bootstraps the default group on first write and migrates any legacy flat secrets into that default group
 - `list` renders a Noora table by default, supports `--plain` for script-friendly output, and supports `-i` / `--interactive` for row selection
@@ -139,6 +141,10 @@ Store and read grouped secrets:
 "Build/Products/Debug/swift-pass" list --group myproject --subgroup dev
 "Build/Products/Debug/swift-pass" list --plain
 "Build/Products/Debug/swift-pass" list -i
+"Build/Products/Debug/swift-pass" groups
+"Build/Products/Debug/swift-pass" groups myproject
+"Build/Products/Debug/swift-pass" gs --plain
+"Build/Products/Debug/swift-pass" groups -i
 ```
 
 ## Testing

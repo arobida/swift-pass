@@ -89,6 +89,17 @@ struct SecretListEntry: Equatable {
     let modificationDate: Date?
 }
 
+struct GroupListEntry: Equatable {
+    let group: String
+    let subgroups: [String]
+    let secretCount: Int
+}
+
+struct SubgroupListEntry: Equatable {
+    let scope: SecretScope
+    let secretCount: Int
+}
+
 struct GroupCatalog: Codable, Equatable {
     struct GroupEntry: Codable, Equatable {
         let name: String
