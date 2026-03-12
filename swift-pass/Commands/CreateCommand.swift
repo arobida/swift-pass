@@ -24,9 +24,9 @@ struct CreateCommand: AsyncParsableCommand {
             subgroup: subgroup
         )
         let resolvedScope = try input.resolvedScope()
-        let outcome = try SecretVault().createScope(resolvedScope)
+        let created = try SecretVault().createScope(resolvedScope)
 
-        if outcome.created {
+        if created {
             Noora().success(
                 .alert(
                     "'\(resolvedScope.displayPath)' created",

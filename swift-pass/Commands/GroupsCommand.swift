@@ -94,9 +94,7 @@ struct GroupsCommand: AsyncParsableCommand {
     }
 
     func validateOutputOptions() throws {
-        guard !(plain && interactive) else {
-            throw ValidationError("The --plain and --interactive options cannot be used together.")
-        }
+        try CommandValidation.validateOutputOptions(plain: plain, interactive: interactive)
     }
 
     func groupPlainLines(for entries: [GroupListEntry]) -> [String] {

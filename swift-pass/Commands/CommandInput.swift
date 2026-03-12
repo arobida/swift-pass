@@ -1,6 +1,20 @@
 import ArgumentParser
 import Foundation
 
+enum CommandValidation {
+    static func validateSubgroup(group: String?, subgroup: String?) throws {
+        guard subgroup == nil || group != nil else {
+            throw ValidationError("The --subgroup option requires --group.")
+        }
+    }
+
+    static func validateOutputOptions(plain: Bool, interactive: Bool) throws {
+        guard !(plain && interactive) else {
+            throw ValidationError("The --plain and --interactive options cannot be used together.")
+        }
+    }
+}
+
 struct SetCommandInput: Equatable {
     let scope: SecretScopeInput
     let name: String
@@ -41,14 +55,15 @@ enum CommandInputResolver {
                 throw ValidationError("The set command expects <name>=<value>, <group>:<name>=<value>, or <group>:<subgroup>:<name>=<value>.")
             }
 
-            let reference = try parseSetReference(String(parts[0]))
+            let reference = try parseSecretReference(
+                String(parts[0]),
+                errorMessage: "The set command expects <name>, <group>:<name>, or <group>:<subgroup>:<name> before '='."
+            )
             let resolvedValue = try validatedValue(String(parts[1]))
             return SetCommandInput(scope: reference.scope, name: reference.name, value: resolvedValue)
         }
 
-        guard subgroup == nil || group != nil else {
-            throw ValidationError("The --subgroup option requires --group.")
-        }
+        try CommandValidation.validateSubgroup(group: group, subgroup: subgroup)
 
         let scope = SecretScopeInput(group: group, subgroup: subgroup)
 
@@ -109,12 +124,13 @@ enum CommandInputResolver {
                 throw ValidationError("Do not mix shorthand input with --group, --subgroup, or --name.")
             }
 
-            return try parseNamedSecretReference(shorthand)
+            return try parseSecretReference(
+                shorthand,
+                errorMessage: "The command expects <name>, <group>:<name>, or <group>:<subgroup>:<name>."
+            )
         }
 
-        guard subgroup == nil || group != nil else {
-            throw ValidationError("The --subgroup option requires --group.")
-        }
+        try CommandValidation.validateSubgroup(group: group, subgroup: subgroup)
 
         guard let name else {
             throw ValidationError("Provide a secret name or use the shorthand positional argument.")
@@ -136,16 +152,16 @@ enum CommandInputResolver {
                 throw ValidationError("Do not mix shorthand input with --group or --subgroup.")
             }
 
-            let parts = shorthand.split(separator: ":", omittingEmptySubsequences: false).map(String.init)
+            let scope = try parseScopeShorthand(
+                shorthand,
+                errorMessage: "The create command expects <group> or <group>:<subgroup>."
+            )
 
-            switch parts.count {
-            case 1:
-                return CreateScopeInput(group: try validatedGroup(parts[0]), subgroup: nil)
-            case 2:
-                return CreateScopeInput(group: try validatedGroup(parts[0]), subgroup: try validatedSubgroup(parts[1]))
-            default:
-                throw ValidationError("The create command expects <group> or <group>:<subgroup>.")
+            guard let group = scope.group else {
+                preconditionFailure("Parsed scope shorthand must include a group.")
             }
+
+            return CreateScopeInput(group: group, subgroup: scope.subgroup)
         }
 
         guard let group else {
@@ -168,29 +184,21 @@ enum CommandInputResolver {
                 throw ValidationError("Do not mix shorthand input with --group or --subgroup.")
             }
 
-            let parts = shorthand.split(separator: ":", omittingEmptySubsequences: false).map(String.init)
-
-            switch parts.count {
-            case 1:
-                return SecretScopeInput(group: try validatedGroup(parts[0]))
-            case 2:
-                return SecretScopeInput(
-                    group: try validatedGroup(parts[0]),
-                    subgroup: try validatedSubgroup(parts[1])
-                )
-            default:
-                throw ValidationError("The list command expects <group> or <group>:<subgroup>.")
-            }
+            return try parseScopeShorthand(
+                shorthand,
+                errorMessage: "The list command expects <group> or <group>:<subgroup>."
+            )
         }
 
-        guard subgroup == nil || group != nil else {
-            throw ValidationError("The --subgroup option requires --group.")
-        }
+        try CommandValidation.validateSubgroup(group: group, subgroup: subgroup)
 
         return SecretScopeInput(group: group, subgroup: subgroup)
     }
 
-    private static func parseSetReference(_ value: String) throws -> NamedSecretInput {
+    private static func parseSecretReference(
+        _ value: String,
+        errorMessage: String
+    ) throws -> NamedSecretInput {
         let parts = value.split(separator: ":", omittingEmptySubsequences: false).map(String.init)
 
         switch parts.count {
@@ -210,31 +218,26 @@ enum CommandInputResolver {
                 name: try validatedName(parts[2])
             )
         default:
-            throw ValidationError("The set command expects <name>, <group>:<name>, or <group>:<subgroup>:<name> before '='.")
+            throw ValidationError(errorMessage)
         }
     }
 
-    private static func parseNamedSecretReference(_ value: String) throws -> NamedSecretInput {
+    private static func parseScopeShorthand(
+        _ value: String,
+        errorMessage: String
+    ) throws -> SecretScopeInput {
         let parts = value.split(separator: ":", omittingEmptySubsequences: false).map(String.init)
 
         switch parts.count {
         case 1:
-            return NamedSecretInput(scope: SecretScopeInput(), name: try validatedName(parts[0]))
+            return SecretScopeInput(group: try validatedGroup(parts[0]), subgroup: nil)
         case 2:
-            return NamedSecretInput(
-                scope: SecretScopeInput(group: try validatedGroup(parts[0])),
-                name: try validatedName(parts[1])
-            )
-        case 3:
-            return NamedSecretInput(
-                scope: SecretScopeInput(
-                    group: try validatedGroup(parts[0]),
-                    subgroup: try validatedSubgroup(parts[1])
-                ),
-                name: try validatedName(parts[2])
+            return SecretScopeInput(
+                group: try validatedGroup(parts[0]),
+                subgroup: try validatedSubgroup(parts[1])
             )
         default:
-            throw ValidationError("The command expects <name>, <group>:<name>, or <group>:<subgroup>:<name>.")
+            throw ValidationError(errorMessage)
         }
     }
 

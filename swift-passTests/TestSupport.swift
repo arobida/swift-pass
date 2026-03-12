@@ -41,21 +41,12 @@ final class StubPrompter: UserPrompter {
 final class InMemorySecretStore: SecretStore {
     var scopedValues: [SecretReference: String] = [:]
     var scopedModificationDates: [SecretReference: Date] = [:]
-    var legacyValues: [String: String] = [:]
-    var failWritesForNames: Set<String> = []
 
     func canAccessKeychain() -> Bool {
         true
     }
 
     func setSecret(_ value: String, at reference: SecretReference) throws -> SecretStoreSaveResult {
-        if failWritesForNames.contains(reference.name) {
-            throw SecretStoreError.operationFailed(
-                operation: "store the secret named '\(reference.displayPath)' in the macOS Keychain",
-                status: errSecInternalError
-            )
-        }
-
         let existed = scopedValues.updateValue(value, forKey: reference) != nil
         scopedModificationDates[reference] = scopedModificationDates[reference] ?? Date(timeIntervalSince1970: 0)
         return existed ? .updated : .created
@@ -88,20 +79,6 @@ final class InMemorySecretStore: SecretStore {
                 )
             }
             .sorted { $0.reference.name < $1.reference.name }
-    }
-
-    func secretNames(in scope: SecretScope) throws -> [String] {
-        try secretListEntries(in: scope).map(\.reference.name)
-    }
-
-    func legacySecretEntries() throws -> [LegacySecretEntry] {
-        legacyValues
-            .map { LegacySecretEntry(name: $0.key, value: $0.value) }
-            .sorted { $0.name < $1.name }
-    }
-
-    func removeLegacySecret(named name: String) throws -> Bool {
-        legacyValues.removeValue(forKey: name) != nil
     }
 }
 

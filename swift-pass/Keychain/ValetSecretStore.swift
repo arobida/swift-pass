@@ -59,22 +59,6 @@ struct ValetSecretStore: SecretStore {
             .sorted { $0.reference.name < $1.reference.name }
     }
 
-    func secretNames(in scope: SecretScope) throws -> [String] {
-        try secretListEntries(in: scope).map(\.reference.name)
-    }
-
-    func legacySecretEntries() throws -> [LegacySecretEntry] {
-        try allItemAttributes()
-            .map(\.accountName)
-            .filter { codec.decode($0) == nil }
-            .sorted()
-            .map { LegacySecretEntry(name: $0, value: try secretValue(accountName: $0, label: $0)) }
-    }
-
-    func removeLegacySecret(named name: String) throws -> Bool {
-        try removeSecret(accountName: name, label: name)
-    }
-
     private func setSecret(_ value: String, accountName: String, label: String) throws -> SecretStoreSaveResult {
         guard let data = value.data(using: .utf8) else {
             throw SecretStoreError.invalidSecretEncoding(label)

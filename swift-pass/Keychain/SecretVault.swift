@@ -1,12 +1,6 @@
-struct CreateScopeOutcome {
-    let created: Bool
-    let scope: SecretScope
-}
-
 struct DoctorStatus {
     let catalog: GroupCatalog?
     let secretReferences: [SecretReference]
-    let legacySecretEntries: [LegacySecretEntry]
 
     var orphanedSecretReferences: [SecretReference] {
         guard let catalog else {
@@ -45,15 +39,10 @@ struct SecretVault {
         catalogStore.canAccessKeychain()
     }
 
-    func currentCatalog() throws -> GroupCatalog? {
-        try catalogStore.catalog()
-    }
-
     func doctorStatus() throws -> DoctorStatus {
         DoctorStatus(
             catalog: try catalogStore.catalog(),
-            secretReferences: try secretStore.allSecretReferences(),
-            legacySecretEntries: try secretStore.legacySecretEntries()
+            secretReferences: try secretStore.allSecretReferences()
         )
     }
 
@@ -80,7 +69,7 @@ struct SecretVault {
     }
 
     @discardableResult
-    func createScope(_ scope: SecretScope) throws -> CreateScopeOutcome {
+    func createScope(_ scope: SecretScope) throws -> Bool {
         var catalog = try catalogForWrite()
 
         if let subgroup = scope.subgroup {
@@ -112,7 +101,7 @@ struct SecretVault {
                 try catalogStore.saveCatalog(catalog)
             }
 
-            return CreateScopeOutcome(created: !existed, scope: scope)
+            return !existed
         }
 
         let existed = catalog.containsGroup(scope.group)
@@ -122,7 +111,7 @@ struct SecretVault {
             try catalogStore.saveCatalog(catalog)
         }
 
-        return CreateScopeOutcome(created: !existed, scope: scope)
+        return !existed
     }
 
     func setSecret(_ value: String, at reference: SecretReference) throws -> SecretStoreSaveResult {
@@ -146,10 +135,6 @@ struct SecretVault {
         let catalog = try loadCatalogForRead()
         try ensureScopeExists(scope, in: catalog)
         return try secretStore.secretListEntries(in: scope)
-    }
-
-    func secretNames(in scope: SecretScope) throws -> [String] {
-        try secretListEntries(in: scope).map(\.reference.name)
     }
 
     func groupListEntries() throws -> [GroupListEntry] {
@@ -280,22 +265,6 @@ struct SecretVault {
 
     private func bootstrapCatalog() throws -> GroupCatalog {
         let catalog = GroupCatalog.bootstrappedDefault()
-        let defaultScope = try SecretScope(group: catalog.defaultGroup)
-        let legacyEntries = try secretStore.legacySecretEntries()
-
-        for entry in legacyEntries {
-            let reference = try SecretReference(scope: defaultScope, name: entry.name)
-            _ = try secretStore.setSecret(entry.value, at: reference)
-
-            let storedValue = try secretStore.secret(at: reference)
-
-            guard storedValue == entry.value else {
-                throw GroupCatalogError.catalogCorrupted("legacy secret '\(entry.name)' did not verify after migration")
-            }
-
-            _ = try secretStore.removeLegacySecret(named: entry.name)
-        }
-
         try catalogStore.saveCatalog(catalog)
         return catalog
     }

@@ -202,11 +202,6 @@ struct GroupCatalog: Codable, Equatable {
     }
 }
 
-struct LegacySecretEntry: Equatable {
-    let name: String
-    let value: String
-}
-
 struct ScopedSecretKeyCodec {
     private static let prefix = "v1"
 

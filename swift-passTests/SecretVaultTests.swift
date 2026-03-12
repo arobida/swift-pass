@@ -2,9 +2,8 @@ import XCTest
 @testable import swift_passCore
 
 final class SecretVaultTests: XCTestCase {
-    func testFirstSetBootstrapsDefaultCatalogAndMigratesLegacySecrets() throws {
+    func testFirstSetBootstrapsDefaultCatalogWhenMissing() throws {
         let secretStore = InMemorySecretStore()
-        secretStore.legacyValues["github"] = "legacy-token"
         let catalogStore = InMemoryGroupCatalogStore()
         let vault = SecretVault(
             secretStore: secretStore,
@@ -19,8 +18,6 @@ final class SecretVaultTests: XCTestCase {
 
         XCTAssertEqual(catalogStore.catalogValue?.defaultGroup, "default")
         XCTAssertTrue(catalogStore.catalogValue?.containsGroup("default") == true)
-        XCTAssertTrue(secretStore.legacyValues.isEmpty)
-        XCTAssertEqual(secretStore.scopedValues[try SecretReference(scope: defaultScope, name: "github")], "legacy-token")
         XCTAssertEqual(secretStore.scopedValues[newReference], "new-token")
     }
 
@@ -33,9 +30,9 @@ final class SecretVaultTests: XCTestCase {
             environment: .init(isInteractive: true)
         )
 
-        let outcome = try vault.createScope(SecretScope(group: "myproject"))
+        let created = try vault.createScope(SecretScope(group: "myproject"))
 
-        XCTAssertTrue(outcome.created)
+        XCTAssertTrue(created)
         XCTAssertTrue(catalogStore.catalogValue?.containsGroup("default") == true)
         XCTAssertTrue(catalogStore.catalogValue?.containsGroup("myproject") == true)
     }
@@ -53,7 +50,7 @@ final class SecretVaultTests: XCTestCase {
         }
     }
 
-    func testListScopeExcludesSubgroupSecretsFromParentGroup() throws {
+    func testListEntriesExcludeSubgroupSecretsFromParentGroup() throws {
         let secretStore = InMemorySecretStore()
         let catalogStore = InMemoryGroupCatalogStore(
             catalog: GroupCatalog(
@@ -76,9 +73,9 @@ final class SecretVaultTests: XCTestCase {
         secretStore.scopedValues[groupReference] = "group-token"
         secretStore.scopedValues[subgroupReference] = "subgroup-token"
 
-        let names = try vault.secretNames(in: SecretScope(group: "myproject"))
+        let entries = try vault.secretListEntries(in: SecretScope(group: "myproject"))
 
-        XCTAssertEqual(names, ["github"])
+        XCTAssertEqual(entries.map(\.reference.name), ["github"])
     }
 
     func testListEntriesIncludeStructuredMetadataForScope() throws {
@@ -298,7 +295,6 @@ final class SecretVaultTests: XCTestCase {
 
         XCTAssertEqual(status.catalog, catalog)
         XCTAssertEqual(status.orphanedSecretReferences, [])
-        XCTAssertEqual(status.legacySecretEntries, [])
     }
 
     func testDoctorStatusTreatsAllScopedSecretsAsOrphanedWhenCatalogIsMissing() throws {
@@ -346,21 +342,6 @@ final class SecretVaultTests: XCTestCase {
         XCTAssertEqual(status.orphanedSecretReferences, [missingGroupReference, missingSubgroupReference])
     }
 
-    func testDoctorStatusIncludesLegacySecretsWithoutParentGroup() throws {
-        let secretStore = InMemorySecretStore()
-        secretStore.legacyValues["github"] = "legacy-token"
-        let vault = SecretVault(
-            secretStore: secretStore,
-            catalogStore: InMemoryGroupCatalogStore(catalog: GroupCatalog.bootstrappedDefault()),
-            prompter: StubPrompter(),
-            environment: .init(isInteractive: true)
-        )
-
-        let status = try vault.doctorStatus()
-
-        XCTAssertEqual(status.legacySecretEntries, [LegacySecretEntry(name: "github", value: "legacy-token")])
-    }
-
     func testDuplicateCreateIsIdempotent() throws {
         let catalogStore = InMemoryGroupCatalogStore()
         let vault = SecretVault(
@@ -374,7 +355,7 @@ final class SecretVaultTests: XCTestCase {
         _ = try vault.createScope(scope)
         let second = try vault.createScope(scope)
 
-        XCTAssertFalse(second.created)
+        XCTAssertFalse(second)
     }
 
     func testSameSecretNameCanExistInDifferentScopes() throws {
@@ -447,9 +428,9 @@ final class SecretVaultTests: XCTestCase {
             environment: .init(isInteractive: true)
         )
 
-        let outcome = try vault.createScope(SecretScope(group: "myproject", subgroup: "dev"))
+        let created = try vault.createScope(SecretScope(group: "myproject", subgroup: "dev"))
 
-        XCTAssertTrue(outcome.created)
+        XCTAssertTrue(created)
         XCTAssertTrue(catalogStore.catalogValue?.containsGroup("myproject") == true)
         XCTAssertTrue(catalogStore.catalogValue?.containsSubgroup("dev", in: "myproject") == true)
     }
@@ -472,21 +453,4 @@ final class SecretVaultTests: XCTestCase {
         }
     }
 
-    func testMigrationFailureLeavesCatalogUnsetAndLegacySecretIntact() throws {
-        let secretStore = InMemorySecretStore()
-        secretStore.legacyValues["github"] = "legacy-token"
-        secretStore.failWritesForNames = ["github"]
-        let catalogStore = InMemoryGroupCatalogStore()
-        let vault = SecretVault(
-            secretStore: secretStore,
-            catalogStore: catalogStore,
-            prompter: StubPrompter(),
-            environment: .init(isInteractive: true)
-        )
-        let reference = try SecretReference(scope: SecretScope(group: "default"), name: "openai")
-
-        XCTAssertThrowsError(try vault.setSecret("new-token", at: reference))
-        XCTAssertNil(catalogStore.catalogValue)
-        XCTAssertEqual(secretStore.legacyValues["github"], "legacy-token")
-    }
 }

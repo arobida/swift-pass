@@ -143,29 +143,12 @@ struct DoctorCommand: AsyncParsableCommand {
 
     private func secretParentageCheckResult(for status: DoctorStatus) -> DoctorCheckResult {
         let orphanedReferences = status.orphanedSecretReferences
-        let legacyEntries = status.legacySecretEntries
 
-        guard orphanedReferences.isEmpty, legacyEntries.isEmpty else {
-            if !orphanedReferences.isEmpty, !legacyEntries.isEmpty {
-                return DoctorCheckResult(
-                    level: .warning,
-                    title: "Some secrets are not attached to configured groups.",
-                    takeaway: "Scoped secrets without a parent: \(formattedSecretPaths(orphanedReferences.map(\.displayPath))). Legacy secrets still awaiting migration: \(formattedSecretPaths(legacyEntries.map(\.name)))."
-                )
-            }
-
-            if !orphanedReferences.isEmpty {
-                return DoctorCheckResult(
-                    level: .warning,
-                    title: "Some secrets are not attached to configured groups.",
-                    takeaway: "Missing parent group or subgroup for: \(formattedSecretPaths(orphanedReferences.map(\.displayPath)))."
-                )
-            }
-
+        guard orphanedReferences.isEmpty else {
             return DoctorCheckResult(
                 level: .warning,
                 title: "Some secrets are not attached to configured groups.",
-                takeaway: "Legacy secrets still awaiting migration: \(formattedSecretPaths(legacyEntries.map(\.name)))."
+                takeaway: "Missing parent group or subgroup for: \(formattedSecretPaths(orphanedReferences.map(\.displayPath)))."
             )
         }
 
